@@ -5,7 +5,7 @@ export interface Activity {
   date:string;
   time:string;
   location:string;
-  category:string ;
+  category:string;
   totalSlots:string;
   registeredSlots:string;
   organization:string;
