@@ -6,10 +6,10 @@ export interface Activity {
   time:string;
   location:string;
   category:string;
-  totalSlots:string;
-  registeredSlots:string;
+  totalSlots:number;
+  registeredSlots:number;
   organization:string;
-  registeredDeadline:string;
+  registrationDeadline:string;
   difficulty:'Easy'|'Medium'|'Hard';
 }
 export interface Registration {
