@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ActivityService } from '../services/activity.service';
@@ -18,7 +18,8 @@ export class ActivityListComponent implements OnInit {
   selectedCategory = 'All';
   categories = ['All', 'Education', 'Environmental', 'Health'];
 
-  constructor(private activityService: ActivityService) { }
+  constructor(private activityService: ActivityService,
+              private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadActivities();
@@ -36,11 +37,13 @@ export class ActivityListComponent implements OnInit {
         this.activities = data;
         this.loading = false;
         this.error = null;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading activities:', err);
         this.error = 'Failed to load activities';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

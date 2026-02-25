@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, of, Subject } from 'rxjs';
 import { delay, tap, catchError } from 'rxjs/operators';
 import { Activity } from '../models/activity.model';
@@ -8,34 +9,48 @@ import { Activity } from '../models/activity.model';
   providedIn: 'root'
 })
 export class ActivityService {
+  // Use a relative path without the leading slash to avoid base href routing issues
   private activitiesUrl = 'assets/mock-data/activities.json';
   private activityUpdatedSubject = new Subject<void>();
   public activityUpdated$ = this.activityUpdatedSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   // Load all activities from mock JSON
   getActivities(): Observable<Activity[]> {
+    // 1. Skip on the server to prevent crashing
+    if (!isPlatformBrowser(this.platformId)) {
+      return of([]);
+    }
+
+    // 2. Fetch the data instantly without the delay() operator
     return this.http.get<Activity[]>(this.activitiesUrl).pipe(
-      delay(500), // Simulate network delay
+      tap(data => console.log('✅ SUCCESS! JSON Data loaded:', data)),
       catchError(error => {
-        console.error('Error loading activities:', error);
-        return of([]);
+        console.error('❌ HTTP Error! Angular cannot find the file:', error);
+        return of([]); // This guarantees the loading screen goes away even if it fails
       })
     );
   }
 
   // Get single activity by ID
   getActivityById(id: number): Observable<Activity | undefined> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return of(undefined);
+    }
+
     return new Observable(observer => {
-      this.getActivities().subscribe(
-        activities => {
+      this.getActivities().subscribe({
+        next: (activities) => {
           const activity = activities.find(a => a.id === id);
           observer.next(activity);
           observer.complete();
         },
-        error => observer.error(error)
-      );
+        error: (error) => observer.error(error)
+      });
     });
   }
 
