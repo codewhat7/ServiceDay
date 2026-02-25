@@ -1,0 +1,109 @@
+<main class="activity-list-container">
+  <header class="list-header">
+    <h1>Available Service Day Activities</h1>
+    <p>Browse and register for volunteer opportunities</p>
+  </header>
+
+  <section class="filter-section">
+    <h2>Filter by Category</h2>
+    <nav class="filter-buttons">
+      @for (cat of categories; track cat) {
+        <button
+          [class.active]="selectedCategory === cat"
+          (click)="selectedCategory = cat"
+          class="filter-btn"
+          [attr.aria-pressed]="selectedCategory === cat">
+          {{ cat }}
+        </button>
+      }
+    </nav>
+  </section>
+
+  @if (loading) {
+    <div class="loading-state">
+      <p>Loading activities...</p>
+    </div>
+  }
+
+  @if (error && !loading) {
+    <div class="error-message" role="alert">
+      {{ error }}
+    </div>
+  }
+
+  @if (!loading && getFilteredActivities().length === 0) {
+    <div class="empty-state">
+      <p>No activities found in this category</p>
+    </div>
+  }
+
+  <div class="activities-grid">
+    @for (activity of getFilteredActivities(); track activity.id) {
+      <article class="activity-card">
+
+        <header class="card-header">
+          <h3>{{ activity.title }}</h3>
+          <span class="category-badge" [attr.data-category]="activity.category">
+            {{ activity.category }}
+          </span>
+        </header>
+
+        <p class="description">{{ activity.description }}</p>
+
+        <section class="activity-details">
+          <div class="detail-item">
+            <span class="label">📅 Date:</span>
+            <span>{{ activity.date | date: 'MMM dd, yyyy' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">⏰ Time:</span>
+            <span>{{ activity.time }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">📍 Location:</span>
+            <span>{{ activity.location }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">🏢 Organization:</span>
+            <span>{{ activity.organization }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">💪 Difficulty:</span>
+            <span>{{ activity.difficulty }}</span>
+          </div>
+        </section>
+
+        <section class="slots-section">
+          <div class="slot-info">
+            <strong>Available Slots: {{ getAvailableSlots(activity) }} / {{ activity.totalSlots }}</strong>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill"
+                 [style.width.%]="(activity.registeredSlots / activity.totalSlots) * 100">
+            </div>
+          </div>
+        </section>
+
+        <div class="deadline-info">
+          @if (isDeadlinePassed(activity)) {
+            <span class="deadline-passed">
+              ❌ Registration Closed
+            </span>
+          } @else {
+            <span class="deadline-ok">
+              ✓ Deadline: {{ activity.registrationDeadline | date: 'MMM dd, yyyy' }}
+            </span>
+          }
+        </div>
+
+        <button
+          class="btn-register"
+          [disabled]="isDeadlinePassed(activity) || getAvailableSlots(activity) === 0"
+          [routerLink]="'/detail/' + activity.id"
+          aria-label="View details for {{ activity.title }}">
+          View Details
+        </button>
+      </article>
+    }
+  </div>
+</main>
