@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';  // ← CHANGE THIS
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],  // ← REMOVE HttpClientModule from here
+  imports: [RouterOutlet, RouterLink, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class AppComponent {
-  title = 'Service Day Dashboard';
+  constructor(public authService: AuthService) {}
 }

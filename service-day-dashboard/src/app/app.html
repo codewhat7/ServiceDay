@@ -1,13 +1,25 @@
-<header class="app-header">
-  <div class="header-content">
-    <h1 class="logo">Service Day Dashboard</h1>
-  </div>
-</header>
+@if (authService.currentUser$ | async; as user) {
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="logo">Service Day Dashboard</h1>
+
+      <nav class="header-nav">
+        @if (user.role === 'Staff') {
+          <button routerLink="/activities" class="nav-btn">Activities</button>
+        }
+
+        @if (user.role === 'Admin') {
+          <button routerLink="/admin" class="nav-btn">Admin Dashboard</button>
+        }
+
+        <button (click)="authService.logout()" routerLink="/login" class="nav-btn" style="background: #dc3545; color: white;">
+          Logout ({{ user.name }})
+        </button>
+      </nav>
+    </div>
+  </header>
+}
 
 <main class="app-content">
   <router-outlet></router-outlet>
 </main>
-
-<footer class="app-footer">
-  <p>&copy; 2026 Service Day Dashboard. All rights reserved.</p>
-</footer>
