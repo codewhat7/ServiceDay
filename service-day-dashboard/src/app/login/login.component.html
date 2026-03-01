@@ -1,0 +1,23 @@
+<div class="login-container">
+  <div class="login-box">
+    <h2>Service Day Login</h2>
+    <p>Use <b>admin&#64;test.com</b> (Admin) or <b>staff&#64;test.com</b> (Staff)<br>Password: <b>password123</b></p>
+
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" [(ngModel)]="email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" [(ngModel)]="password" required>
+      </div>
+
+      @if (errorMessage) {
+        <p class="error">{{ errorMessage }}</p>
+      }
+
+      <button type="submit" class="btn-submit">Login</button>
+    </form>
+  </div>
+</div>
