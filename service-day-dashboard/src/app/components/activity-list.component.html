@@ -99,7 +99,7 @@
         <button
           class="btn-register"
           [disabled]="isDeadlinePassed(activity) || getAvailableSlots(activity) === 0"
-          [routerLink]="'/detail/' + activity.id"
+          [routerLink]="'/activities/' + activity.id"
           aria-label="View details for {{ activity.title }}">
           View Details
         </button>

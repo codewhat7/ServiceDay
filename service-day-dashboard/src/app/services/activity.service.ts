@@ -11,6 +11,7 @@ import { Activity } from '../models/activity.model';
 export class ActivityService {
   // Use a relative path without the leading slash to avoid base href routing issues
   private activitiesUrl = 'assets/mock-data/activities.json';
+  private cachedActivities: Activity[] = [];
   private activityUpdatedSubject = new Subject<void>();
   public activityUpdated$ = this.activityUpdatedSubject.asObservable();
 
@@ -84,6 +85,42 @@ export class ActivityService {
     return of({ success: true }).pipe(
       delay(800),
       tap(() => this.activityUpdatedSubject.next())
+    );
+  }
+  deleteActivity(activityId: number): Observable<any> {
+    return of({ success: true, message: 'Activity deleted' }).pipe(
+      delay(800),
+      tap(() => {
+        console.log(`Admin deleted activity ${activityId}`);
+        // Notify the app that data changed so the UI refreshes instantly
+        this.activityUpdatedSubject.next();
+      })
+    );
+  }
+  // Create a new activity
+  createActivity(newActivityData: any): Observable<any> {
+    return of({ success: true, message: 'Activity created' }).pipe(
+      delay(800), // Simulate network delay
+      tap(() => {
+        // Automatically generate the next ID number
+        const maxId = this.cachedActivities.length > 0
+          ? Math.max(...this.cachedActivities.map(a => a.id))
+          : 0;
+
+        // Build the complete activity object
+        const activityToAdd: Activity = {
+          ...newActivityData,
+          id: maxId + 1,
+          registeredSlots: 0 // A new activity always starts with 0 volunteers
+        };
+
+        // Save it to our in-memory cache
+        this.cachedActivities.push(activityToAdd);
+        console.log(`Admin created new activity: ${activityToAdd.title}`);
+
+        // Notify the app to refresh the data
+        this.activityUpdatedSubject.next();
+      })
     );
   }
 }

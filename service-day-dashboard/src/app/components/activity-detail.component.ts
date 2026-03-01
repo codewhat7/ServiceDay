@@ -77,7 +77,7 @@ export class ActivityDetailComponent implements OnInit {
         this.registering = false;
 
         setTimeout(() => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/activities']);
         }, 2000);
       },
       error: () => {

@@ -1,0 +1,31 @@
+.admin-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+/* Header & Create Button */
+.admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+.header-titles h2 { margin: 0 0 5px 0; color: #333; }
+.header-titles p { margin: 0; color: #666; }
+.btn-create { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+.btn-create:hover { background: #218838; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
+/* Monitoring Stats */
+.dashboard-stats { display: flex; gap: 20px; margin-bottom: 30px; }
+.stat-card { flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+.stat-card h3 { margin: 0; font-size: 14px; text-transform: uppercase; opacity: 0.9; }
+.stat-card .stat-number { margin: 10px 0 0 0; font-size: 36px; font-weight: bold; }
+
+/* Table */
+.table-container { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; text-align: left; }
+.admin-table th, .admin-table td { padding: 15px; border-bottom: 1px solid #eee; }
+.admin-table th { background-color: #f8f9fa; color: #333; font-weight: bold; }
+
+/* Progress Bars & Badges */
+.mini-progress { width: 100%; height: 6px; background: #eee; border-radius: 3px; margin-top: 5px; }
+.mini-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); border-radius: 3px; }
+.badge { padding: 6px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+.badge.open { background: #d4edda; color: #155724; }
+.badge.full { background: #f8d7da; color: #721c24; }
+
+/* Delete Button */
+.btn-delete { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+.btn-delete:hover { background: #c82333; }

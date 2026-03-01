@@ -1,0 +1,67 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <div class="header-titles">
+      <h2>Admin Dashboard</h2>
+      <p>Manage NGO activities and monitor volunteer participation</p>
+    </div>
+    <button class="btn-create" routerLink="create">+ Create New Activity</button>
+  </div>
+
+  <div class="dashboard-stats" *ngIf="!loading">
+    <div class="stat-card">
+      <h3>Total NGO Events</h3>
+      <p class="stat-number">{{ totalActivities }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Volunteers</h3>
+      <p class="stat-number">{{ totalRegisteredParticipants }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Overall Fill Rate</h3>
+      <p class="stat-number">
+        {{ (totalRegisteredParticipants / totalAvailableSlots) * 100 | number:'1.0-0' }}%
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading admin data...</div>
+
+  <div class="table-container" *ngIf="!loading">
+    <table class="admin-table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Activity Details</th>
+        <th>Participation (Registered / Total)</th>
+        <th>Status</th>
+        <th>Manage</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let activity of activities">
+        <td>#{{ activity.id }}</td>
+        <td>
+          <strong>{{ activity.title }}</strong><br>
+          <small>{{ activity.date | date: 'MMM dd, yyyy' }} • {{ activity.category }}</small>
+        </td>
+
+        <td>
+          {{ activity.registeredSlots }} / {{ activity.totalSlots }}
+          <div class="mini-progress">
+            <div class="mini-fill" [style.width.%]="getParticipationRate(activity)"></div>
+          </div>
+        </td>
+
+        <td>
+          <span *ngIf="activity.registeredSlots >= activity.totalSlots" class="badge full">FULL</span>
+          <span *ngIf="activity.registeredSlots < activity.totalSlots" class="badge open">OPEN</span>
+        </td>
+
+        <td>
+          <button class="btn-delete" (click)="deleteActivity(activity.id)">Delete</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

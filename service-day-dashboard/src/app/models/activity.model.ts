@@ -23,6 +23,8 @@ export interface Registration {
 export interface Employee {
   id: number;
   name: string;
+  password: string;
   email: string;
   department: string;
+  role: string;
 }
