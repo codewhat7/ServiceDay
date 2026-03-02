@@ -3,9 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { Employee } from '../models/activity.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<Employee | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();

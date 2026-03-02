@@ -5,9 +5,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { delay, tap, catchError } from 'rxjs/operators';
 import { Activity } from '../models/activity.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ActivityService {
   // Use a relative path without the leading slash to avoid base href routing issues
   private activitiesUrl = 'assets/mock-data/activities.json';
