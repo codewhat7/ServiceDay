@@ -1,23 +1,55 @@
-<div class="login-container">
-  <div class="login-box">
-    <h1><b>SERVICE DAY</b></h1>
-    <p>Staff Log In</p>
+<main class="login-page">
+  <section class="login-card">
 
-    <form (ngSubmit)="onLogin()">
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" name="email" [(ngModel)]="email" required>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" [(ngModel)]="password" required>
-      </div>
+    <header class="login-header">
+      <div class="logo-icon">🤝</div>
+      <h1>Welcome Back</h1>
+      <p>Sign in to your ServiceDay account</p>
+    </header>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
 
       @if (errorMessage) {
-        <p class="error">{{ errorMessage }}</p>
+        <div class="error-alert">
+          ⚠ {{ errorMessage }}
+        </div>
       }
 
-      <button type="submit" class="btn-submit">Login</button>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            placeholder="e.g., admin@serviceday.com"
+            class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+            placeholder="Password"
+            class="form-control">
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-submit"
+        [disabled]="!loginForm.valid">
+        Sign In
+      </button>
+
     </form>
-  </div>
-</div>
+  </section>
+</main>

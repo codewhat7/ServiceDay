@@ -1,10 +1,125 @@
-.login-container { display: flex; justify-content: center; align-items: center; height: 80vh; }
-.login-box { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-.login-box h2 { margin-top: 0; color: #333; }
-.form-group { margin-bottom: 20px; text-align: left; }
-.form-group label { font-weight: bold; font-size: 14px; color: #555; }
-input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-input:focus { outline: none; border-color: #667eea; }
-.btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-.error { color: #dc3545; font-size: 14px; margin-bottom: 15px; font-weight: bold; }
+/* Full page background */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* A beautiful soft blue/indigo gradient */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* The floating white card */
+.login-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Header styling */
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.login-header h1 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.login-header p {
+  color: #7f8c8d;
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+/* Form styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e0e6ed;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #2c3e50;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* Make it glow blue when the user clicks inside */
+.form-control:focus {
+  outline: none;
+  border-color: #3498db;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+}
+
+/* Error message box */
+.error-alert {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid #fca5a5;
+}
+
+/* The Sign In Button */
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.btn-submit:hover:not([disabled]) {
+  background-color: #2980b9;
+}
+
+.btn-submit:active:not([disabled]) {
+  transform: scale(0.98);
+}
+
+/* Faded out if the form is empty */
+.btn-submit[disabled] {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
