@@ -1,119 +1,50 @@
-@if (!loading) {
-  <main class="activity-detail-container">
-    <button class="btn-back" (click)="goBack()">← Back to Activities</button>
+<div class="detail-container" style="padding: 20px; max-width: 800px; margin: 0 auto;">
 
-    @if (activity) {
-      <article class="detail-content">
-        <header class="detail-header">
-          <h1>{{ activity.title }}</h1>
-          <span class="category-badge" [attr.data-category]="activity.category">
-            {{ activity.category }}
-          </span>
-        </header>
-
-        <div class="detail-body">
-          <section class="main-content">
-            <section class="description-section">
-              <h2>About This Activity</h2>
-              <p>{{ activity.description }}</p>
-            </section>
-
-            <section class="details-section">
-              <h2>Activity Details</h2>
-              <div class="details-grid">
-                <div class="detail-box">
-                  <span class="label">📅 Date</span>
-                  <span class="value">{{ activity.date | date: 'EEEE, MMMM dd, yyyy' }}</span>
-                </div>
-                <div class="detail-box">
-                  <span class="label">⏰ Time</span>
-                  <span class="value">{{ activity.time }}</span>
-                </div>
-                <div class="detail-box">
-                  <span class="label">📍 Location</span>
-                  <span class="value">{{ activity.location }}</span>
-                </div>
-                <div class="detail-box">
-                  <span class="label">🏢 Organization</span>
-                  <span class="value">{{ activity.organization }}</span>
-                </div>
-                <div class="detail-box">
-                  <span class="label">💪 Difficulty</span>
-                  <span class="value">{{ activity.difficulty }}</span>
-                </div>
-                <div class="detail-box">
-                  <span class="label">⚙️ Status</span>
-                  <span class="value" [style.color]="deadlinePassed ? '#d32f2f' : '#388e3c'">
-                    {{ deadlinePassed ? 'Registration Closed' : 'Open for Registration' }}
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            <section class="registration-section">
-              <h2>Registration Information</h2>
-              <div class="slots-info">
-                <p><strong>Available Slots:</strong> {{ getAvailableSlots() }} / {{ activity.totalSlots }}</p>
-                <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
-                </div>
-                <p class="progress-text">
-                  {{ activity.registeredSlots }} participants registered
-                </p>
-              </div>
-
-              <div class="deadline-box">
-                <p><strong>Registration Deadline:</strong></p>
-                <p class="deadline-date">{{ activity.registrationDeadline | date: 'MMMM dd, yyyy' }}</p>
-
-                @if (deadlinePassed) {
-                  <p class="deadline-warning">❌ Registration deadline has passed</p>
-                } @else {
-                  <p class="deadline-info">✓ Hurry! Registration closes soon</p>
-                }
-              </div>
-            </section>
-          </section>
-
-          <aside class="sidebar">
-            <div class="registration-card">
-              <h3>Ready to Join?</h3>
-
-              @if (registrationSuccess) {
-                <div class="success-message">
-                  ✓ Successfully registered!
-                  <p>You will be redirected to activities.</p>
-                </div>
-              } @else {
-                <div>
-                  @if (isAlreadyRegistered) {
-                    <p class="already-registered">✓ You are already registered for this activity</p>
-                  } @else if (deadlinePassed) {
-                    <p class="deadline-passed-msg">Registration is now closed for this activity</p>
-                  } @else if (getAvailableSlots() === 0) {
-                    <p class="slots-full">This activity is fully booked.</p>
-                  } @else {
-                    <button
-                      class="btn-register-primary"
-                      (click)="registerForActivity()"
-                      [disabled]="registering">
-                      {{ registering ? 'Processing...' : 'Register Now' }}
-                    </button>
-                  }
-                </div>
-              }
-            </div>
-          </aside>
-        </div>
-      </article>
-    } @else {
-      <div class="error-message">
-        <p>Activity not found</p>
-      </div>
-    }
-  </main>
-} @else {
-  <div class="loading">
+  @if (!activity) {
     <p>Loading activity details...</p>
-  </div>
-}
+  } @else {
+    <div class="detail-card" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+      <span class="category-badge" style="background: #e1effe; color: #1e40af; padding: 5px 15px; border-radius: 20px; font-weight: bold;">
+        {{ activity.category }}
+      </span>
+
+      <h2 style="margin-top: 15px; font-size: 28px; color: #2c3e50;">{{ activity.title }}</h2>
+
+      <div class="info-grid" style="margin: 20px 0; display: grid; gap: 10px; color: #475569;">
+        <p><strong>📅 Date:</strong> {{ activity.date | date: 'longDate' }}</p>
+        <p><strong>⏰ Time:</strong> {{ activity.time }}</p>
+        <p><strong>📍 Location:</strong> {{ activity.location }}</p>
+        <p><strong>👥 Slots Filled:</strong> {{ activity.registeredSlots }} / {{ activity.totalSlots }}</p>
+      </div>
+
+      <div class="description-box" style="margin-bottom: 30px;">
+        <h3>About this Activity</h3>
+        <p style="line-height: 1.6; color: #334155;">{{ activity.description }}</p>
+      </div>
+
+      <hr style="border: 1px solid #e2e8f0; margin-bottom: 20px;">
+
+      <div class="action-buttons" style="display: flex; gap: 15px;">
+        <button class="btn-back" routerLink="/activities" style="background: white; border: 2px solid #cbd5e1; color: #475569; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+          ← Back
+        </button>
+
+        @if (isRegistered) {
+          <button class="btn-cancel" (click)="cancel()" style="background-color: #dc3545; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; flex-grow: 1;">
+            Cancel My Registration
+          </button>
+        } @else {
+          <button class="btn-register" (click)="register()" [disabled]="activity.registeredSlots >= activity.totalSlots" style="background-color: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; flex-grow: 1;">
+            @if (activity.registeredSlots >= activity.totalSlots) {
+              Activity Full
+            } @else {
+              Register Now
+            }
+          </button>
+        }
+      </div>
+
+    </div>
+  }
+</div>
