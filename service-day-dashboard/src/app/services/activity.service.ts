@@ -5,9 +5,10 @@ import { Observable, of, Subject } from 'rxjs';
 import { delay, tap, catchError } from 'rxjs/operators';
 import { Activity } from '../models/activity.model';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root' // <-- CRITICAL: This makes the "Whiteboard" permanent!
+})
 export class ActivityService {
-  // Use a relative path without the leading slash to avoid base href routing issues
   private activitiesUrl = 'assets/mock-data/activities.json';
   private cachedActivities: Activity[] = [];
   private activityUpdatedSubject = new Subject<void>();
@@ -18,24 +19,27 @@ export class ActivityService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
-  // Load all activities from mock JSON
   getActivities(): Observable<Activity[]> {
-    // 1. Skip on the server to prevent crashing
     if (!isPlatformBrowser(this.platformId)) {
       return of([]);
     }
 
-    // 2. Fetch the data instantly without the delay() operator
+    if (this.cachedActivities.length > 0) {
+      return of(this.cachedActivities);
+    }
+
     return this.http.get<Activity[]>(this.activitiesUrl).pipe(
-      tap(data => console.log('✅ SUCCESS! JSON Data loaded:', data)),
+      tap(data => {
+        this.cachedActivities = data;
+        console.log('✅ SUCCESS! JSON Data loaded into cache');
+      }),
       catchError(error => {
         console.error('❌ HTTP Error! Angular cannot find the file:', error);
-        return of([]); // This guarantees the loading screen goes away even if it fails
+        return of([]);
       })
     );
   }
 
-  // Get single activity by ID
   getActivityById(id: number): Observable<Activity | undefined> {
     if (!isPlatformBrowser(this.platformId)) {
       return of(undefined);
@@ -53,24 +57,43 @@ export class ActivityService {
     });
   }
 
-  // Register for activity
   registerActivity(activityId: number, employeeId: number): Observable<any> {
-    const mockResponse = {
-      success: true,
-      message: 'Registration successful',
-      registrationId: Math.floor(Math.random() * 10000)
-    };
-
-    return of(mockResponse).pipe(
-      delay(1000),
+    return of({ success: true, message: 'Registration successful' }).pipe(
+      delay(800),
       tap(() => {
+        const activity = this.cachedActivities.find(a => a.id === activityId);
+        if (activity) {
+          if (!activity.registeredStaffIds) {
+            activity.registeredStaffIds = [];
+          }
+          if (!activity.registeredStaffIds.includes(employeeId)) {
+            activity.registeredStaffIds.push(employeeId);
+            activity.registeredSlots = (activity.registeredSlots || 0) + 1;
+          }
+        }
         console.log(`Employee ${employeeId} registered for activity ${activityId}`);
         this.activityUpdatedSubject.next();
       })
     );
   }
 
-  // Update activity slots
+  cancelRegistration(activityId: number, employeeId: number): Observable<any> {
+    return of({ success: true }).pipe(
+      delay(800),
+      tap(() => {
+        const activity = this.cachedActivities.find(a => a.id === activityId);
+        if (activity && activity.registeredStaffIds) {
+          activity.registeredStaffIds = activity.registeredStaffIds.filter(id => id !== employeeId);
+          if (activity.registeredSlots && activity.registeredSlots > 0) {
+            activity.registeredSlots -= 1;
+          }
+        }
+        console.log(`Employee ${employeeId} cancelled registration for activity ${activityId}`);
+        this.activityUpdatedSubject.next();
+      })
+    );
+  }
+
   updateActivitySlots(activityId: number, newSlots: number): Observable<any> {
     return of({ success: true }).pipe(
       delay(800),
@@ -78,45 +101,34 @@ export class ActivityService {
     );
   }
 
-  // Cancel registration
-  cancelRegistration(registrationId: number): Observable<any> {
-    return of({ success: true }).pipe(
-      delay(800),
-      tap(() => this.activityUpdatedSubject.next())
-    );
-  }
   deleteActivity(activityId: number): Observable<any> {
     return of({ success: true, message: 'Activity deleted' }).pipe(
       delay(800),
       tap(() => {
+        this.cachedActivities = this.cachedActivities.filter(a => a.id !== activityId);
         console.log(`Admin deleted activity ${activityId}`);
-        // Notify the app that data changed so the UI refreshes instantly
         this.activityUpdatedSubject.next();
       })
     );
   }
-  // Create a new activity
+
   createActivity(newActivityData: any): Observable<any> {
     return of({ success: true, message: 'Activity created' }).pipe(
-      delay(800), // Simulate network delay
+      delay(800),
       tap(() => {
-        // Automatically generate the next ID number
         const maxId = this.cachedActivities.length > 0
           ? Math.max(...this.cachedActivities.map(a => a.id))
           : 0;
 
-        // Build the complete activity object
         const activityToAdd: Activity = {
           ...newActivityData,
           id: maxId + 1,
-          registeredSlots: 0 // A new activity always starts with 0 volunteers
+          registeredSlots: 0,
+          registeredStaffIds: []
         };
 
-        // Save it to our in-memory cache
         this.cachedActivities.push(activityToAdd);
         console.log(`Admin created new activity: ${activityToAdd.title}`);
-
-        // Notify the app to refresh the data
         this.activityUpdatedSubject.next();
       })
     );
