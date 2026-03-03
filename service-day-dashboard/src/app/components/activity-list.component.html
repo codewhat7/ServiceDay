@@ -96,13 +96,22 @@
           }
         </div>
 
-        <button
-          class="btn-register"
-          [disabled]="isDeadlinePassed(activity) || getAvailableSlots(activity) === 0"
-          [routerLink]="'/activities/' + activity.id"
-          aria-label="View details for {{ activity.title }}">
-          View Details
-        </button>
+        @if (isUserRegistered(activity)) {
+          <button class="btn-register" disabled style="background-color: #28a745; color: white; cursor: not-allowed; opacity: 0.8;">
+            ✓ Registered
+          </button>
+        } @else {
+          <button  [disabled]="isDeadlinePassed(activity) || getAvailableSlots(activity) === 0"
+                   class="btn-register"
+                   [routerLink]="['/activities', activity.id]">
+            View Details
+          </button>
+        }
+        @if (userRole === 'Admin') {
+          <button class="btn-delete" (click)="deleteActivity(activity.id)" style="background-color: #dc3545; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px;">
+            🗑️ Delete Activity
+          </button>
+        }
       </article>
     }
   </div>
