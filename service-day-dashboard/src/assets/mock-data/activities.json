@@ -11,7 +11,8 @@
     "registeredSlots": 12,
     "organization": "Green Earth NGO",
     "registrationDeadline": "2026-03-10",
-    "difficulty": "Medium"
+    "difficulty": "Medium",
+    "registeredStaffIds": [2]
   },
   {
     "id": 2,

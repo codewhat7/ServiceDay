@@ -11,6 +11,7 @@ export interface Activity {
   organization:string;
   registrationDeadline:string;
   difficulty:'Easy'|'Medium'|'Hard';
+  registeredStaffIds: number[];
 }
 export interface Registration {
   id: number;
