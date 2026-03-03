@@ -6,6 +6,7 @@
       <nav class="header-nav">
         @if (user.role === 'Staff') {
           <button routerLink="/activities" class="nav-btn">Activities</button>
+          <button routerLink="/history" class="nav-btn">Registered Activity</button>
         }
 
         @if (user.role === 'Admin') {
