@@ -12,6 +12,11 @@ export interface Activity {
   registrationDeadline:string;
   difficulty:'Easy'|'Medium'|'Hard';
   registeredStaffIds: number[];
+  reminders?: {
+    oneWeek: boolean;
+    threeDays: boolean;
+    oneDay: boolean;
+  };
 }
 export interface Registration {
   id: number;

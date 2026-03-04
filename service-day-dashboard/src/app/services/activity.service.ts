@@ -93,14 +93,6 @@ export class ActivityService {
       })
     );
   }
-
-  updateActivitySlots(activityId: number, newSlots: number): Observable<any> {
-    return of({ success: true }).pipe(
-      delay(800),
-      tap(() => this.activityUpdatedSubject.next())
-    );
-  }
-
   deleteActivity(activityId: number): Observable<any> {
     return of({ success: true, message: 'Activity deleted' }).pipe(
       delay(800),
@@ -131,6 +123,34 @@ export class ActivityService {
         console.log(`Admin created new activity: ${activityToAdd.title}`);
         this.activityUpdatedSubject.next();
       })
+    );
+  }
+  updateActivity(id: number, updatedData: any): Observable<any> {
+    return of({ success: true, message: 'Activity updated' }).pipe(
+      delay(800),
+      tap(() => {
+        // 1. Find the exact position of the activity on the whiteboard
+        const index = this.cachedActivities.findIndex(a => a.id === id);
+
+        if (index !== -1) {
+          // 2. Overwrite the old data with the new data, but keep the registered users!
+          this.cachedActivities[index] = {
+            ...this.cachedActivities[index],
+            ...updatedData
+          };
+          console.log(`Admin updated activity: ${id}`);
+
+          // 3. Tell the app to refresh the screen
+          this.activityUpdatedSubject.next();
+        }
+      })
+    );
+  }
+  sendManualReminder(activityId: number): Observable<any> {
+    // Simulating an API call to an email/notification server
+    console.log(`System: Broadcasting reminder for Activity ID ${activityId} to available employees.`);
+    return of({ success: true, message: 'Reminders sent successfully' }).pipe(
+      delay(800) // 800ms fake loading delay
     );
   }
 }

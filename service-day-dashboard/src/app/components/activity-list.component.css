@@ -249,6 +249,28 @@
   cursor: not-allowed;
   transform: none;
 }
+.btn-edit {
+  background-color: #f59e0b; /* Nice orange color */
+  color: white;
+  flex: 1; /* Makes it take up exactly half the space */
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.btn-edit:hover {
+  background-color: #d97706;
+}
+/*Admin Control*/
+.admin-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  width: 100%;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

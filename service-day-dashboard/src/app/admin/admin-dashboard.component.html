@@ -7,61 +7,105 @@
     <button class="btn-create" routerLink="create">+ Create New Activity</button>
   </div>
 
-  <div class="dashboard-stats" *ngIf="!loading">
-    <div class="stat-card">
-      <h3>Total NGO Events</h3>
-      <p class="stat-number">{{ totalActivities }}</p>
+  <div class="notification-center" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; gap: 20px; flex-wrap: wrap;">
+
+    <div style="flex: 1; min-width: 300px; border-right: 1px solid #e2e8f0; padding-right: 20px;">
+      <h3 style="margin-top: 0; color: #2c3e50;">📢 Broadcast Message</h3>
+      <p style="font-size: 14px; color: #64748b; margin-bottom: 10px;">Send an urgent update to all staff and NGOs.</p>
+      <textarea [(ngModel)]="broadcastMessageText" rows="2" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" placeholder="Type your message..."></textarea>
+      <button (click)="sendBroadcast()" [disabled]="!broadcastMessageText.trim()" style="background-color: #0dcaf0; color: black; padding: 8px 16px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+        Send Broadcast
+      </button>
     </div>
-    <div class="stat-card">
-      <h3>Total Volunteers</h3>
-      <p class="stat-number">{{ totalRegisteredParticipants }}</p>
-    </div>
-    <div class="stat-card">
-      <h3>Overall Fill Rate</h3>
-      <p class="stat-number">
-        {{ (totalRegisteredParticipants / totalAvailableSlots) * 100 | number:'1.0-0' }}%
-      </p>
-    </div>
+
   </div>
 
-  <div *ngIf="loading" class="loading">Loading admin data...</div>
+  @if (!loading) {
+    <div class="dashboard-stats">
+      <div class="stat-card">
+        <h3>Total NGO Events</h3>
+        <p class="stat-number">{{ totalActivities }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Volunteers</h3>
+        <p class="stat-number">{{ totalRegisteredParticipants }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Overall Fill Rate</h3>
+        <p class="stat-number">
+          {{ totalAvailableSlots > 0 ? ((totalRegisteredParticipants / totalAvailableSlots) * 100 | number:'1.0-0') : 0 }}%
+        </p>
+      </div>
+    </div>
+  }
 
-  <div class="table-container" *ngIf="!loading">
-    <table class="admin-table">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Activity Details</th>
-        <th>Participation (Registered / Total)</th>
-        <th>Status</th>
-        <th>Manage</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let activity of activities">
-        <td>#{{ activity.id }}</td>
-        <td>
-          <strong>{{ activity.title }}</strong><br>
-          <small>{{ activity.date | date: 'MMM dd, yyyy' }} • {{ activity.category }}</small>
-        </td>
+  @if (loading) {
+    <div class="loading">Loading admin data...</div>
+  } @else {
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Activity Details</th>
+          <th>Participation (Registered / Total)</th>
+          <th>Status</th>
+          <th>Manage</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (activity of activities; track activity.id) {
+            <tr>
+              <td>#{{ activity.id }}</td>
+              <td>
+                <strong>{{ activity.title }}</strong><br>
+                <small>{{ activity.date | date: 'MMM dd, yyyy' }} • {{ activity.category }}</small>
+              </td>
 
-        <td>
-          {{ activity.registeredSlots }} / {{ activity.totalSlots }}
-          <div class="mini-progress">
-            <div class="mini-fill" [style.width.%]="getParticipationRate(activity)"></div>
-          </div>
-        </td>
+              <td>
+                {{ activity.registeredSlots || 0 }} / {{ activity.totalSlots }}
+                <div class="mini-progress">
+                  <div class="mini-fill" [style.width.%]="getParticipationRate(activity)"></div>
+                </div>
+              </td>
 
-        <td>
-          <span *ngIf="activity.registeredSlots >= activity.totalSlots" class="badge full">FULL</span>
-          <span *ngIf="activity.registeredSlots < activity.totalSlots" class="badge open">OPEN</span>
-        </td>
+              <td>
+                @if ((activity.registeredSlots || 0) >= activity.totalSlots) {
+                  <span class="badge full">FULL</span>
+                } @else {
+                  <span class="badge open">OPEN</span>
+                }
+              </td>
 
-        <td>
-          <button class="btn-delete" (click)="deleteActivity(activity.id)">Delete</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+              <td>
+                <div style="display: flex; gap: 8px;">
+                  <button [routerLink]="['/admin/edit', activity.id]"
+                          style="background-color: #f59e0b; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                    ✏️ Edit
+                  </button>
+
+                  <button [routerLink]="['/admin/schedule', activity.id]"
+                          style="background-color: #6f42c1; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                    ⏰ Schedule
+                  </button>
+
+                  @if ((activity.registeredSlots || 0) < activity.totalSlots) {
+                    <button (click)="sendReminder(activity)"
+                            style="background-color: #0dcaf0; color: black; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                      🔔 Remind
+                    </button>
+                  }
+
+                  <button class="btn-delete" (click)="deleteActivity(activity.id)"
+                          style="background-color: #dc3545; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>

@@ -1,70 +1,89 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { SharedModule } from '../shared/shared.module';
-import { ActivityService } from '../services/activity.service';
-import { Activity } from '../models/activity.model';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms'; // <-- Required for the Notification Center
+import { ActivityService } from '../services/activity.service';
+import { NotificationService } from '../services/notification.service';
+import { Activity } from '../models/activity.model';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [SharedModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css']
+  styleUrls: ['./admin-dashboard.component.css'] // Ensure this matches your actual CSS file name
 })
 export class AdminDashboardComponent implements OnInit {
   activities: Activity[] = [];
   loading = true;
 
+  // Stats
+  totalActivities = 0;
+  totalAvailableSlots = 0;
+  totalRegisteredParticipants = 0;
+
+  // Use Case 5: Notification Center Variables
+  broadcastMessageText: string = '';
+  reminders = { oneWeek: true, threeDays: true, oneDay: true };
+
   constructor(
     private activityService: ActivityService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
-    this.activityService.activityUpdated$.subscribe(() => {
-      this.loadData();
-    });
+    this.loadActivities();
   }
 
-  loadData(): void {
+  loadActivities(): void {
     this.loading = true;
     this.activityService.getActivities().subscribe(data => {
       this.activities = data;
+      this.calculateStats();
       this.loading = false;
       this.cdr.detectChanges();
     });
   }
 
-  // --- 1. MONITOR PARTICIPATION LOGIC ---
-  get totalActivities(): number {
-    return this.activities.length;
-  }
-
-  get totalRegisteredParticipants(): number {
-    return this.activities.reduce((sum, activity) => sum + activity.registeredSlots, 0);
-  }
-
-  get totalAvailableSlots(): number {
-    return this.activities.reduce((sum, activity) => sum + activity.totalSlots, 0);
+  calculateStats(): void {
+    this.totalActivities = this.activities.length;
+    this.totalAvailableSlots = this.activities.reduce((sum, act) => sum + act.totalSlots, 0);
+    this.totalRegisteredParticipants = this.activities.reduce((sum, act) => sum + (act.registeredSlots || 0), 0);
   }
 
   getParticipationRate(activity: Activity): number {
-    if (activity.totalSlots === 0) return 0;
-    return (activity.registeredSlots / activity.totalSlots) * 100;
+    if (!activity.totalSlots) return 0;
+    return ((activity.registeredSlots || 0) / activity.totalSlots) * 100;
   }
 
-  // --- 2. MANAGE ACTIVITIES LOGIC ---
+  // Use Case 1: Delete
   deleteActivity(id: number): void {
-    if(confirm('Are you sure you want to delete this NGO activity?')) {
+    if (confirm('Are you sure you want to delete this activity?')) {
       this.activityService.deleteActivity(id).subscribe(() => {
-        alert('Activity deleted successfully!');
+        this.loadActivities(); // Refresh table
       });
     }
   }
 
-  // Mock add function to prove management capabilities
-  addNewActivity(): void {
-    alert('This opens the "Create Activity" form! (Simulation for Assignment)');
+  // Use Case 4: Manual Reminder
+  sendReminder(activity: Activity): void {
+    const availableSlots = activity.totalSlots - (activity.registeredSlots || 0);
+    const confirmSend = confirm(`Send reminder to staff? There are still ${availableSlots} slots available for "${activity.title}".`);
+
+    if (confirmSend) {
+      console.log(`System: Broadcasting reminder for Activity ID ${activity.id} to available employees.`);
+      alert(`✅ Reminder successfully sent to available employees for ${activity.title}!`);
+    }
   }
+
+  // Use Case 5: Broadcast Message
+  sendBroadcast(): void {
+    if (this.broadcastMessageText.trim()) {
+      this.notificationService.broadcastMessage(this.broadcastMessageText);
+      alert('✅ Broadcast message sent to all staff and NGOs!');
+      this.broadcastMessageText = ''; // clear input box
+    }
+  }
+
 }

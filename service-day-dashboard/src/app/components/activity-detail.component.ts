@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { ActivityService } from '../services/activity.service';
 import { AuthService } from '../services/auth.service';
 import { Activity } from '../models/activity.model';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-activity-detail',
@@ -21,7 +22,8 @@ export class ActivityDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private activityService: ActivityService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -64,6 +66,7 @@ export class ActivityDetailComponent implements OnInit {
     // 2. If we have the data, proceed with the whiteboard save!
     this.activityService.registerActivity(this.activity.id, this.currentUserId).subscribe(() => {
       this.isRegistered = true;
+      this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
       alert('✅ Successfully registered! Returning to list...');
 
       // 3. Navigate back to the list using the Router (Soft refresh)
@@ -75,6 +78,7 @@ export class ActivityDetailComponent implements OnInit {
     if (this.activity && this.currentUserId) {
       this.activityService.cancelRegistration(this.activity.id, this.currentUserId).subscribe(() => {
         this.isRegistered = false;
+        this.notificationService.sendCancellationEmail(this.currentUserId!, this.activity!.title);
         alert('Registration cancelled.');
         this.router.navigate(['/activities']);
       });

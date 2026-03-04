@@ -89,11 +89,4 @@ export class ActivityListComponent implements OnInit {
     return activity.registeredStaffIds.some(id => String(id) === String(this.currentUserId));
   }
 
-  deleteActivity(id: number): void {
-    if (confirm('Are you sure you want to completely delete this activity?')) {
-      this.activityService.deleteActivity(id).subscribe(() => {
-        alert('Activity deleted successfully.');
-      });
-    }
-  }
 }
