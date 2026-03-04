@@ -1,0 +1,90 @@
+<div style="padding: 20px; max-width: 700px; margin: 40px auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  <h2 style="color: #2c3e50; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">✏️ Edit Activity Details</h2>
+
+  <form (ngSubmit)="saveChanges()" #editForm="ngForm" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+
+    <div>
+      <label style="font-weight: bold; color: #475569;">Title:</label>
+      <input type="text" name="title" [(ngModel)]="activityData.title" required
+             style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+    </div>
+
+    <div>
+      <label style="font-weight: bold; color: #475569;">Description:</label>
+      <textarea name="description" [(ngModel)]="activityData.description" required rows="3"
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 15px;">
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Category:</label>
+        <select name="category" [(ngModel)]="activityData.category" required
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+          <option value="Education">Education</option>
+          <option value="Environmental">Environmental</option>
+          <option value="Health">Health</option>
+        </select>
+      </div>
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Organization:</label>
+        <input type="text" name="organization" [(ngModel)]="activityData.organization" required
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 15px;">
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Event Date:</label>
+        <input type="date" name="date" [(ngModel)]="activityData.date" required
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+      </div>
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Time (e.g., 09:00 AM - 12:00 PM):</label>
+        <input type="text" name="time" [(ngModel)]="activityData.time" required
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 15px;">
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Location:</label>
+        <input type="text" name="location" [(ngModel)]="activityData.location" required
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+      </div>
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Difficulty:</label>
+        <select name="difficulty" [(ngModel)]="activityData.difficulty" required
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 15px;">
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Total Slots:</label>
+        <input type="number" name="totalSlots" [(ngModel)]="activityData.totalSlots" required min="1"
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+      </div>
+      <div style="flex: 1;">
+        <label style="font-weight: bold; color: #475569;">Registration Deadline:</label>
+        <input type="date" name="registrationDeadline" [(ngModel)]="activityData.registrationDeadline" required
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;">
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; margin-top: 25px;">
+      <button type="button" routerLink="/admin"
+              style="flex: 1; padding: 12px; background: white; color: #475569; border: 2px solid #cbd5e1; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="!editForm.valid"
+              style="flex: 1; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        Save Changes
+      </button>
+    </div>
+
+  </form>
+</div>
