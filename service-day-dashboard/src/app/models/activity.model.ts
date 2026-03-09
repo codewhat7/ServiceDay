@@ -18,13 +18,6 @@ export interface Activity {
     oneDay: boolean;
   };
 }
-export interface Registration {
-  id: number;
-  employeeId: number;
-  activityId: number;
-  registrationDate: string;
-  status: 'Confirmed' | 'Waitlist' | 'Cancelled';
-}
 
 export interface Employee {
   id: number;

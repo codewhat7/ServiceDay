@@ -15,6 +15,10 @@ import { QRCodeComponent } from 'angularx-qrcode';
   styleUrls: ['./activity-detail.component.css']
 })
 export class ActivityDetailComponent implements OnInit {
+
+  // 🌟 THE FIX: This is stored purely in temporary RAM, no localStorage needed!
+  static lastRegistrationDate: string | null = null;
+
   qrData = 'Service Day Activity Entry';
   activity: Activity | undefined;
   currentUserId: number | null = null;
@@ -29,13 +33,11 @@ export class ActivityDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // 1. Get logged in user
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       this.checkRegistrationStatus();
     });
 
-    // 2. Fetch the activity
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.activityService.getActivityById(id).subscribe(data => {
       this.activity = data;
@@ -43,36 +45,63 @@ export class ActivityDetailComponent implements OnInit {
     });
   }
 
-  // 3. Check if user is already registered
   checkRegistrationStatus(): void {
     if (this.activity && this.currentUserId && this.activity.registeredStaffIds) {
-      this.isRegistered = this.activity.registeredStaffIds.includes(this.currentUserId);
+      this.isRegistered = this.activity.registeredStaffIds.some(
+        id => Number(id) === Number(this.currentUserId)
+      );
     } else {
       this.isRegistered = false;
     }
   }
 
   register(): void {
-    // 1. Check if the app actually knows who you are!
-    if (!this.currentUserId) {
-      alert('❌ ERROR: The app forgot your User ID! Please log out and log back in.');
-      console.error('Missing User ID in Detail Component');
+    if (!this.currentUserId || !this.activity) {
+      alert('❌ ERROR: Missing user or activity data.');
       return;
     }
 
-    if (!this.activity) {
-      alert('❌ ERROR: Activity data is missing!');
-      return;
+    // --- RULE 1: STAFF CAN ONLY REGISTER ONCE PER DAY (Using RAM) ---
+    const today = new Date().toDateString();
+
+    if (ActivityDetailComponent.lastRegistrationDate === today) {
+      alert('⏳ REGISTRATION LIMIT: You have already registered for an activity today. Please come back tomorrow!');
+      return; // Stops the function instantly
     }
 
-    // 2. If we have the data, proceed with the whiteboard save!
-    this.activityService.registerActivity(this.activity.id, this.currentUserId).subscribe(() => {
-      this.isRegistered = true;
-      this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
-      alert('✅ Successfully registered! Returning to list...');
+    // --- RULE 2: STAFF CANNOT REGISTER FOR CONFLICTING EVENT DATES ---
+    this.activityService.getActivities().subscribe(allActivities => {
 
-      // 3. Navigate back to the list using the Router (Soft refresh)
-      this.router.navigate(['/activities']);
+      const myActivities = allActivities.filter(a => {
+        if (!a.registeredStaffIds) return false;
+        return a.registeredStaffIds.some(id => Number(id) === Number(this.currentUserId));
+      });
+
+      const targetDate = new Date(this.activity!.date).toDateString();
+
+      const hasConflict = myActivities.some(myAct => {
+        const existingDate = new Date(myAct.date).toDateString();
+        return existingDate === targetDate;
+      });
+
+      if (hasConflict) {
+        alert(`❌ SCHEDULE CONFLICT: You are already registered for another activity on ${this.activity!.date}. Staff can only attend 1 activity per event date!`);
+        return; // Stops the function instantly
+      }
+
+      // --- SUCCESS: PROCEED WITH REGISTRATION ---
+      this.activityService.registerActivity(this.activity!.id, this.currentUserId!).subscribe(() => {
+        this.isRegistered = true;
+
+        // Apply the Rule 1 Stamp: Save today's date into temporary RAM
+        ActivityDetailComponent.lastRegistrationDate = today;
+
+        // Trigger the automated confirmation email
+        this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
+
+        alert('✅ Successfully registered! Returning to list...');
+        this.router.navigate(['/activities']);
+      });
     });
   }
 
@@ -80,7 +109,9 @@ export class ActivityDetailComponent implements OnInit {
     if (this.activity && this.currentUserId) {
       this.activityService.cancelRegistration(this.activity.id, this.currentUserId).subscribe(() => {
         this.isRegistered = false;
+
         this.notificationService.sendCancellationEmail(this.currentUserId!, this.activity!.title);
+
         alert('Registration cancelled.');
         this.router.navigate(['/activities']);
       });

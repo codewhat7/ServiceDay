@@ -7,6 +7,7 @@ import { staffGuard } from './guards/staff.guard';
 import { RegisteredHistoryComponent } from './components/activity-registered.component';
 import { AdminEditComponent } from './admin/admin-edit.component';
 import { AdminScheduleComponent } from './admin/admin-schedule.component';
+import { AdminParticipantsComponent } from './admin/admin-participants.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -35,6 +36,8 @@ export const routes: Routes = [
   { path: 'admin/edit/:id', component: AdminEditComponent },
 
   { path: 'admin/schedule/:id', component: AdminScheduleComponent},
+
+  { path: 'admin/participants/:id', component: AdminParticipantsComponent },
 
 ];
 
