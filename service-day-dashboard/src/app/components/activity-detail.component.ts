@@ -5,15 +5,17 @@ import { ActivityService } from '../services/activity.service';
 import { AuthService } from '../services/auth.service';
 import { Activity } from '../models/activity.model';
 import { NotificationService } from '../services/notification.service';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, QRCodeComponent],
   templateUrl: './activity-detail.component.html',
   styleUrls: ['./activity-detail.component.css']
 })
 export class ActivityDetailComponent implements OnInit {
+  qrData = 'Service Day Activity Entry';
   activity: Activity | undefined;
   currentUserId: number | null = null;
   isRegistered = false;
