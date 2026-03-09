@@ -9,7 +9,8 @@ import { Activity } from '../models/activity.model';
   selector: 'app-admin-edit',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './admin-edit.component.html' // <-- Updated to match the new HTML file name
+  templateUrl: './admin-edit.component.html',
+  styleUrl:'./admin-edit.component.css'// <-- Updated to match the new HTML file name
 })
 export class AdminEditComponent implements OnInit {
   activityId!: number;
