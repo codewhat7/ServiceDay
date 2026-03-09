@@ -97,13 +97,13 @@
         </div>
 
         @if (isUserRegistered(activity)) {
-          <button class="btn-register" disabled style="background-color: #28a745; color: white; cursor: not-allowed; opacity: 0.8;">
+          <button class="btn-register btn-status-registered" disabled>
             ✓ Registered
           </button>
         } @else {
-          <button  [disabled]="isDeadlinePassed(activity) || getAvailableSlots(activity) === 0"
-                   class="btn-register"
-                   [routerLink]="['/activities', activity.id]">
+          <button [disabled]="isDeadlinePassed(activity) || getAvailableSlots(activity) === 0"
+                  class="btn-register"
+                  [routerLink]="['/activities', activity.id]">
             View Details
           </button>
         }

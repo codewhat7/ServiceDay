@@ -1,87 +1,104 @@
 .schedule-container {
-  padding: 20px;
+  padding: 2.5rem;
   max-width: 500px;
-  margin: 40px auto;
+  margin: 3rem auto;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f1f5f9;
 }
 
 h2 {
-  color: #2c3e50;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 10px;
-  margin-top: 0;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 800;
 }
 
 .subtitle {
   color: #64748b;
-  margin-bottom: 20px;
-  line-height: 1.5;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
 }
 
 .subtitle strong {
-  color: #0d6efd;
-  font-size: 18px;
+  color: #6f42c1;
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.1rem;
 }
 
 .schedule-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1.5rem;
 }
 
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  font-weight: bold;
-  color: #475569;
+  gap: 1rem;
   background: #f8fafc;
-  padding: 20px;
-  border-radius: 5px;
+  padding: 1.5rem;
+  border-radius: 8px;
   border: 1px solid #e2e8f0;
 }
 
-.checkbox-group label {
+.checkbox-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
   cursor: pointer;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
 }
 
-.checkbox-group input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+.checkbox-item:hover {
+  color: #6f42c1;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
+  accent-color: #6f42c1;
 }
 
 .action-buttons {
   display: flex;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 1rem;
 }
 
 .btn-cancel {
   flex: 1;
-  padding: 12px;
+  padding: 0.75rem;
   background: white;
-  color: #475569;
-  border: 2px solid #cbd5e1;
-  border-radius: 5px;
+  color: #64748b;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #f8fafc;
+  color: #0f172a;
 }
 
 .btn-save {
   flex: 1;
-  padding: 12px;
+  padding: 0.75rem;
   background: #6f42c1;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: bold;
+  transition: background 0.2s;
 }
 
 .btn-save:hover {

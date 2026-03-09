@@ -3,21 +3,35 @@
   @if (authService.currentUser$ | async; as user) {
     <header class="app-header">
       <div class="header-content">
-        <h1 class="logo">Service Day Dashboard</h1>
+        <div class="logo-container">
+          <span class="logo-icon">🤝</span>
+          <h1 class="logo-text">Service Day</h1>
+        </div>
 
         <nav class="header-nav">
           @if (user.role === 'Staff') {
-            <button routerLink="/activities" class="nav-btn">Activities</button>
-            <button routerLink="/history" class="nav-btn">Registered Activity</button>
+            <button routerLink="/activities" class="nav-btn">
+              <span>📅</span> Activities
+            </button>
+            <button routerLink="/history" class="nav-btn">
+              <span>✅</span> My Registrations
+            </button>
           }
 
           @if (user.role === 'Admin') {
-            <button routerLink="/admin" class="nav-btn">Admin Dashboard</button>
+            <button routerLink="/admin" class="nav-btn admin-btn">
+              <span>⚙️</span> Admin Dashboard
+            </button>
           }
 
-          <button (click)="authService.logout()" routerLink="/login" class="nav-btn" style="background: #dc3545; color: white;">
-            Logout ({{ user.name }})
-          </button>
+          <div class="divider"></div>
+
+          <div class="user-profile">
+            <span class="user-greeting">Hi, <strong>{{ user.name }}</strong></span>
+            <button (click)="authService.logout()" routerLink="/login" class="nav-btn logout-btn">
+              Logout
+            </button>
+          </div>
         </nav>
       </div>
     </header>

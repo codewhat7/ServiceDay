@@ -1,324 +1,205 @@
 .activity-list-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem 1.5rem;
 }
 
 .list-header {
-  margin-bottom: 40px;
+  margin-bottom: 2.5rem;
   text-align: center;
 }
 
 .list-header h1 {
-  font-size: 32px;
-  color: #333;
-  margin: 0 0 10px 0;
+  font-size: 2rem;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+  font-weight: 800;
 }
 
 .list-header p {
-  color: #666;
-  font-size: 16px;
-  margin: 0;
+  color: #64748b;
+  font-size: 1rem;
 }
 
-/* Filter Section - Using Flexbox */
+/* Filter Section */
 .filter-section {
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
 .filter-section h2 {
-  color: #333;
-  margin-bottom: 15px;
-  font-size: 18px;
+  color: #334155;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .filter-buttons {
   display: flex;
-  gap: 10px;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .filter-btn {
-  padding: 10px 20px;
-  border: 2px solid #ddd;
+  padding: 0.6rem 1.25rem;
+  border: 2px solid #e2e8f0;
   background: white;
   cursor: pointer;
-  border-radius: 25px;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 50px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
 }
 
 .filter-btn:hover {
-  border-color: #007bff;
-  background-color: #f0f5ff;
+  border-color: #0ea5e9;
+  background-color: #f0f9ff;
+  color: #0ea5e9;
 }
 
 .filter-btn.active {
-  background-color: #007bff;
+  background-color: #0ea5e9;
   color: white;
-  border-color: #007bff;
+  border-color: #0ea5e9;
 }
 
-/* Loading and Error States */
+/* States */
 .loading-state, .error-message, .empty-state {
   text-align: center;
-  padding: 40px 20px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  margin: 20px 0;
+  padding: 3rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
 }
+
+.loading-state p { color: #64748b; font-weight: 500; }
 
 .error-message {
-  background-color: #ffebee;
-  color: #c62828;
-  border-left: 4px solid #c62828;
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-left: 4px solid #dc2626;
 }
 
-/* Activities Grid */
+/* Grid & Cards */
 .activities-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-  margin-top: 30px;
+  gap: 1.5rem;
 }
 
 .activity-card {
   background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
 .activity-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
 }
 
-/* Card Header */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
-  gap: 10px;
+  margin-bottom: 1rem;
+  gap: 0.75rem;
 }
 
 .card-header h3 {
   margin: 0;
-  color: #333;
-  font-size: 18px;
-  flex: 1;
+  color: #1e293b;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
 .category-badge {
-  padding: 4px 12px;
+  padding: 0.25rem 0.75rem;
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: bold;
-  white-space: nowrap;
+  font-size: 0.7rem;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
-.category-badge[data-category="Education"] {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.category-badge[data-category="Environmental"] {
-  background-color: #e8f5e9;
-  color: #388e3c;
-}
-
-.category-badge[data-category="Health"] {
-  background-color: #fce4ec;
-  color: #c2185b;
-}
+.category-badge[data-category="Education"] { background-color: #eff6ff; color: #1e40af; }
+.category-badge[data-category="Environmental"] { background-color: #f0fdf4; color: #166534; }
+.category-badge[data-category="Health"] { background-color: #fff1f2; color: #9f1239; }
 
 .description {
-  color: #666;
-  font-size: 14px;
-  margin: 12px 0;
-  line-height: 1.5;
-  flex-grow: 1;
+  color: #475569;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
 }
 
-/* Activity Details Section */
 .activity-details {
-  background-color: #f5f5f5;
-  padding: 12px;
-  border-radius: 6px;
-  margin: 12px 0;
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
 }
 
 .detail-item {
   display: flex;
-  margin: 6px 0;
-  font-size: 13px;
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
 }
 
 .detail-item .label {
-  font-weight: 600;
-  margin-right: 8px;
-  min-width: 110px;
-  color: #555;
+  font-weight: 700;
+  min-width: 100px;
+  color: #64748b;
 }
 
-/* Slots Section */
-.slots-section {
-  margin: 15px 0;
-}
+/* Progress */
+.slots-section { margin-bottom: 1rem; }
+.slot-info { font-size: 0.85rem; margin-bottom: 0.5rem; color: #334155; }
+.progress-bar { width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: #10b981; transition: width 0.4s ease; }
 
-.slot-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  margin-bottom: 8px;
-  color: #555;
-}
+.deadline-info { margin-bottom: 1.25rem; font-size: 0.8rem; font-weight: 600; }
+.deadline-passed { background-color: #fee2e2; color: #991b1b; display: block; padding: 0.5rem; border-radius: 6px; text-align: center; }
+.deadline-ok { background-color: #dcfce7; color: #166534; display: block; padding: 0.5rem; border-radius: 6px; text-align: center; }
 
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background-color: #e0e0e0;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4caf50, #81c784);
-  transition: width 0.3s ease;
-}
-
-.deadline-info {
-  padding: 8px;
-  margin: 10px 0;
-  border-radius: 4px;
-  font-size: 12px;
-  text-align: center;
-  font-weight: 500;
-}
-
-.deadline-passed {
-  background-color: #ffebee;
-  color: #c62828;
-  display: block;
-  padding: 8px;
-  border-radius: 4px;
-}
-
-.deadline-ok {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  display: block;
-  padding: 8px;
-  border-radius: 4px;
-}
-
-/* Button */
+/* Buttons */
 .btn-register {
-  padding: 10px 20px;
-  background-color: #007bff;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0ea5e9;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.2s;
   margin-top: auto;
 }
 
 .btn-register:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #0284c7;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .btn-register:disabled {
-  background-color: #ccc;
+  background-color: #cbd5e1;
   cursor: not-allowed;
-  transform: none;
-}
-.btn-edit {
-  background-color: #f59e0b; /* Nice orange color */
-  color: white;
-  flex: 1; /* Makes it take up exactly half the space */
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
 }
 
-.btn-edit:hover {
-  background-color: #d97706;
-}
-/*Admin Control*/
-.admin-controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-  width: 100%;
+/* New Status Class */
+.btn-status-registered {
+  background-color: #10b981 !important;
+  opacity: 1 !important;
+  color: white !important;
 }
 
-/* Responsive Design */
+/* Removed unused .btn-edit and .admin-controls classes */
+
+/* Responsive */
 @media (max-width: 768px) {
-  .activity-list-container {
-    padding: 15px;
-  }
-
-  .list-header h1 {
-    font-size: 24px;
-  }
-
-  .activities-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .category-badge {
-    margin-top: 8px;
-  }
-
-  .filter-buttons {
-    gap: 8px;
-  }
-
-  .filter-btn {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 480px) {
-  .activity-list-container {
-    padding: 10px;
-  }
-
-  .list-header h1 {
-    font-size: 20px;
-  }
-
-  .detail-item {
-    flex-direction: column;
-  }
-
-  .detail-item .label {
-    margin-bottom: 4px;
-  }
+  .activities-grid { grid-template-columns: 1fr; }
 }

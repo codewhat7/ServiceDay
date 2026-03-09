@@ -8,22 +8,22 @@
     <form (ngSubmit)="onSubmit()" #activityForm="ngForm" class="activity-form">
 
       <div class="form-group">
-        <label>Activity Title</label>
-        <input type="text" name="title" [(ngModel)]="newActivity.title" required placeholder="e.g. River Cleanup">
+        <label for="title">Activity Title</label>
+        <input type="text" id="title" name="title" [(ngModel)]="newActivity.title" required placeholder="e.g. River Cleanup">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Category</label>
-          <select name="category" [(ngModel)]="newActivity.category">
+          <label for="category">Category</label>
+          <select id="category" name="category" [(ngModel)]="newActivity.category">
             <option value="Environmental">Environmental</option>
             <option value="Education">Education</option>
             <option value="Health">Health</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Difficulty</label>
-          <select name="difficulty" [(ngModel)]="newActivity.difficulty">
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty" name="difficulty" [(ngModel)]="newActivity.difficulty">
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
@@ -32,40 +32,40 @@
       </div>
 
       <div class="form-group">
-        <label>Description</label>
-        <textarea name="description" [(ngModel)]="newActivity.description" required rows="3" placeholder="Describe the volunteer work..."></textarea>
+        <label for="description">Description</label>
+        <textarea id="description" name="description" [(ngModel)]="newActivity.description" required rows="3" placeholder="Describe the volunteer work..."></textarea>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Event Date</label>
-          <input type="date" name="date" [(ngModel)]="newActivity.date" required>
+          <label for="date">Event Date</label>
+          <input type="date" id="date" name="date" [(ngModel)]="newActivity.date" required>
         </div>
         <div class="form-group">
-          <label>Time (e.g. 09:00 AM - 12:00 PM)</label>
-          <input type="text" name="time" [(ngModel)]="newActivity.time" required>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Location</label>
-          <input type="text" name="location" [(ngModel)]="newActivity.location" required>
-        </div>
-        <div class="form-group">
-          <label>Organization (NGO Name)</label>
-          <input type="text" name="organization" [(ngModel)]="newActivity.organization" required>
+          <label for="time">Time (e.g. 09:00 AM - 12:00 PM)</label>
+          <input type="text" id="time" name="time" [(ngModel)]="newActivity.time" required>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Registration Deadline</label>
-          <input type="date" name="registrationDeadline" [(ngModel)]="newActivity.registrationDeadline" required>
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" [(ngModel)]="newActivity.location" required>
         </div>
         <div class="form-group">
-          <label>Total Volunteer Slots Available</label>
-          <input type="number" name="totalSlots" [(ngModel)]="newActivity.totalSlots" required min="1">
+          <label for="organization">Organization (NGO Name)</label>
+          <input type="text" id="organization" name="organization" [(ngModel)]="newActivity.organization" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="registrationDeadline">Registration Deadline</label>
+          <input type="date" id="registrationDeadline" name="registrationDeadline" [(ngModel)]="newActivity.registrationDeadline" required>
+        </div>
+        <div class="form-group">
+          <label for="totalSlots">Total Volunteer Slots Available</label>
+          <input type="number" id="totalSlots" name="totalSlots" [(ngModel)]="newActivity.totalSlots" required min="1">
         </div>
       </div>
 

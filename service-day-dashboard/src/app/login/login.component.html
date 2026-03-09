@@ -4,14 +4,14 @@
     <header class="login-header">
       <div class="logo-icon">🤝</div>
       <h1>Welcome Back</h1>
-      <p>Sign in to your ServiceDay account</p>
+      <p>Sign in to your Service Day dashboard</p>
     </header>
 
     <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
 
       @if (errorMessage) {
         <div class="error-alert">
-          ⚠ {{ errorMessage }}
+          <span>⚠</span> {{ errorMessage }}
         </div>
       }
 
@@ -38,7 +38,7 @@
             name="password"
             [(ngModel)]="password"
             required
-            placeholder="Password"
+            placeholder="Enter your password"
             class="form-control">
         </div>
       </div>

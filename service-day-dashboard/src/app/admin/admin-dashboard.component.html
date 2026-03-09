@@ -1,46 +1,66 @@
 <div class="admin-container">
+
   <div class="admin-header">
     <div class="header-titles">
       <h2>Admin Dashboard</h2>
-      <p>Manage NGO activities and monitor volunteer participation</p>
+      <p>Manage activities and monitor volunteer participation</p>
     </div>
-    <button class="btn-create" routerLink="create">+ Create New Activity</button>
+    <button class="btn-create" routerLink="create">
+      <span>+</span> Create New Activity
+    </button>
   </div>
 
-  <div class="notification-center" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; gap: 20px; flex-wrap: wrap;">
-
-    <div style="flex: 1; min-width: 300px; border-right: 1px solid #e2e8f0; padding-right: 20px;">
-      <h3 style="margin-top: 0; color: #2c3e50;">📢 Broadcast Message</h3>
-      <p style="font-size: 14px; color: #64748b; margin-bottom: 10px;">Send an urgent update to all staff and NGOs.</p>
-      <textarea [(ngModel)]="broadcastMessageText" rows="2" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" placeholder="Type your message..."></textarea>
-      <button (click)="sendBroadcast()" [disabled]="!broadcastMessageText.trim()" style="background-color: #0dcaf0; color: black; padding: 8px 16px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+  <div class="broadcast-card">
+    <div class="broadcast-info">
+      <h3>📢 Broadcast Message</h3>
+      <p>Send an urgent update to all staff and volunteers.</p>
+    </div>
+    <div class="broadcast-actions">
+      <textarea
+        class="broadcast-input"
+        [(ngModel)]="broadcastMessageText"
+        rows="2"
+        placeholder="Type your message here...">
+      </textarea>
+      <button
+        class="btn-broadcast"
+        (click)="sendBroadcast()"
+        [disabled]="!broadcastMessageText.trim()">
         Send Broadcast
       </button>
     </div>
-
   </div>
 
   @if (!loading) {
     <div class="dashboard-stats">
       <div class="stat-card">
-        <h3>Total NGO Events</h3>
-        <p class="stat-number">{{ totalActivities }}</p>
+        <div class="stat-icon">📅</div>
+        <div class="stat-details">
+          <h3>Total Events</h3>
+          <p class="stat-number">{{ totalActivities }}</p>
+        </div>
       </div>
       <div class="stat-card">
-        <h3>Total Volunteers</h3>
-        <p class="stat-number">{{ totalRegisteredParticipants }}</p>
+        <div class="stat-icon">👥</div>
+        <div class="stat-details">
+          <h3>Total Volunteers</h3>
+          <p class="stat-number">{{ totalRegisteredParticipants }}</p>
+        </div>
       </div>
       <div class="stat-card">
-        <h3>Overall Fill Rate</h3>
-        <p class="stat-number">
-          {{ totalAvailableSlots > 0 ? ((totalRegisteredParticipants / totalAvailableSlots) * 100 | number:'1.0-0') : 0 }}%
-        </p>
+        <div class="stat-icon">📈</div>
+        <div class="stat-details">
+          <h3>Overall Fill Rate</h3>
+          <p class="stat-number">
+            {{ totalAvailableSlots > 0 ? ((totalRegisteredParticipants / totalAvailableSlots) * 100 | number:'1.0-0') : 0 }}%
+          </p>
+        </div>
       </div>
     </div>
   }
 
   @if (loading) {
-    <div class="loading">Loading admin data...</div>
+    <div class="loading-spinner">Loading admin data...</div>
   } @else {
     <div class="table-container">
       <table class="admin-table">
@@ -48,62 +68,56 @@
         <tr>
           <th>ID</th>
           <th>Activity Details</th>
-          <th>Participation (Registered / Total)</th>
+          <th>Participation</th>
           <th>Status</th>
-          <th>Manage</th>
+          <th>Manage Activity</th>
         </tr>
         </thead>
         <tbody>
           @for (activity of activities; track activity.id) {
             <tr>
-              <td>#{{ activity.id }}</td>
-              <td>
-                <strong>{{ activity.title }}</strong><br>
-                <small>{{ activity.date | date: 'MMM dd, yyyy' }} • {{ activity.category }}</small>
+              <td class="cell-id">#{{ activity.id }}</td>
+
+              <td class="cell-details">
+                <strong>{{ activity.title }}</strong>
+                <span class="sub-text">{{ activity.date | date: 'MMM dd, yyyy' }} • {{ activity.category }}</span>
               </td>
 
-              <td>
-                {{ activity.registeredSlots || 0 }} / {{ activity.totalSlots }}
+              <td class="cell-progress">
+                <div class="progress-text">
+                  <span>{{ activity.registeredSlots || 0 }} / {{ activity.totalSlots }} Registered</span>
+                </div>
                 <div class="mini-progress">
                   <div class="mini-fill" [style.width.%]="getParticipationRate(activity)"></div>
                 </div>
               </td>
 
-              <td>
+              <td class="cell-status">
                 @if ((activity.registeredSlots || 0) >= activity.totalSlots) {
-                  <span class="badge full">FULL</span>
+                  <span class="badge badge-full">FULL</span>
                 } @else {
-                  <span class="badge open">OPEN</span>
+                  <span class="badge badge-open">OPEN</span>
                 }
               </td>
 
-              <td>
-                <div style="display: flex; gap: 8px;">
-                  <button [routerLink]="['/admin/edit', activity.id]"
-                          style="background-color: #f59e0b; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+              <td class="cell-actions">
+                <div class="action-grid">
+                  <button class="btn-action btn-edit" [routerLink]="['/admin/edit', activity.id]" title="Edit">
                     ✏️ Edit
                   </button>
-
-                  <button [routerLink]="['/admin/schedule', activity.id]"
-                          style="background-color: #6f42c1; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                  <button class="btn-action btn-schedule" [routerLink]="['/admin/schedule', activity.id]" title="Schedule">
                     ⏰ Schedule
                   </button>
-
+                  <button class="btn-action btn-participants" [routerLink]="['/admin/participants', activity.id]" title="Participants">
+                    👥 Participants
+                  </button>
                   @if ((activity.registeredSlots || 0) < activity.totalSlots) {
-                    <button (click)="sendReminder(activity)"
-                            style="background-color: #0dcaf0; color: black; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                    <button class="btn-action btn-remind" (click)="sendReminder(activity)" title="Send Reminder">
                       🔔 Remind
                     </button>
                   }
-
-                  <button class="btn-delete" (click)="deleteActivity(activity.id)"
-                          style="background-color: #dc3545; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
+                  <button class="btn-action btn-delete" (click)="deleteActivity(activity.id)" title="Delete">
                     🗑️ Delete
-                  </button>
-
-                  <button [routerLink]="['/admin/participants', activity.id]"
-                          style="background-color: #20c997; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;">
-                    👥 Participants
                   </button>
                 </div>
               </td>

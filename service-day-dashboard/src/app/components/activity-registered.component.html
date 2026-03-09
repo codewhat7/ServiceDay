@@ -1,10 +1,10 @@
 <div class="history-container">
   <header class="history-header">
     <h2>My Registration History</h2>
-    <p>Track all the ServiceDay activities you have committed to.</p>
+    <p>Track all the Service Day activities you have committed to.</p>
   </header>
 
-@if (myActivities.length === 0) {
+  @if (myActivities.length === 0) {
     <div class="empty-state">
       <div class="empty-icon">📝</div>
       <h3>No Registrations Yet</h3>
@@ -22,9 +22,11 @@
 
           <div class="card-body">
             <h3>{{ activity.title }}</h3>
-            <p class="detail"><strong>📅 Date:</strong> {{ activity.date | date: 'longDate' }}</p>
-            <p class="detail"><strong>⏰ Time:</strong> {{ activity.time }}</p>
-            <p class="detail"><strong>📍 Location:</strong> {{ activity.location }}</p>
+            <div class="detail-list">
+              <p class="detail"><strong>📅 Date:</strong> {{ activity.date | date: 'longDate' }}</p>
+              <p class="detail"><strong>⏰ Time:</strong> {{ activity.time }}</p>
+              <p class="detail"><strong>📍 Location:</strong> {{ activity.location }}</p>
+            </div>
           </div>
 
           <div class="card-footer">

@@ -1,27 +1,27 @@
 <div class="schedule-container">
-  <h2>⏰ Set Automated Reminders</h2>
-
-  <p class="subtitle">
-    Configure when the system should automatically email registered volunteers for: <br>
-    <strong>{{ activityData.title }}</strong>
-  </p>
+  <header class="schedule-header">
+    <h2>⏰ Automated Reminders</h2>
+    <p class="subtitle">
+      Configure notification triggers for:<br>
+      <strong>{{ activityData.title }}</strong>
+    </p>
+  </header>
 
   <form (ngSubmit)="saveSchedule()" class="schedule-form">
-
     <div class="checkbox-group">
-      <label>
+      <label class="checkbox-item">
         <input type="checkbox" name="oneWeek" [(ngModel)]="activityData.reminders!.oneWeek">
-        1 Week Before Event
+        <span>1 Week Before Event</span>
       </label>
 
-      <label>
+      <label class="checkbox-item">
         <input type="checkbox" name="threeDays" [(ngModel)]="activityData.reminders!.threeDays">
-        3 Days Before Event
+        <span>3 Days Before Event</span>
       </label>
 
-      <label>
+      <label class="checkbox-item">
         <input type="checkbox" name="oneDay" [(ngModel)]="activityData.reminders!.oneDay">
-        1 Day Before Event
+        <span>1 Day Before Event</span>
       </label>
     </div>
 
@@ -29,6 +29,5 @@
       <button type="button" class="btn-cancel" routerLink="/admin">Cancel</button>
       <button type="submit" class="btn-save">Save Schedule</button>
     </div>
-
   </form>
 </div>

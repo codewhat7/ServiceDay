@@ -1,86 +1,117 @@
-:root {
-  --primary-color: #007bff;
-  --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --text-dark: #333;
-  --text-light: #666;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* --- HEADER CONTAINER --- */
 .app-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color:black;
-  padding: 15px 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 50;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0.75rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
+/* --- LOGO STYLING --- */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 1.75rem;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1e293b;
   margin: 0;
+  letter-spacing: -0.5px;
 }
 
-.app-content {
-  min-height: calc(100vh - 140px);
-  background-color: #f5f5f5;
-  padding-top: 20px;
-}
-
-.app-footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 20px;
-  margin-top: 40px;
-}
-
-.app-footer p {
-  margin: 0;
-}
-
+/* --- NAVIGATION BUTTONS --- */
 .header-nav {
   display: flex;
-  gap: 15px;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .nav-btn {
-  background-color: white;
-  color: #764ba2; /* Matches the header gradient */
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  color: #475569;
   border: none;
-  padding: 10px 20px;
-  border-radius: 25px; /* Gives it that modern pill shape */
-  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 15px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease-in-out;
 }
 
 .nav-btn:hover {
-  background-color: #f8f9fa;
-  transform: translateY(-2px); /* Makes the button jump up slightly when hovered */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  background-color: #f1f5f9;
+  color: #0f172a;
 }
 
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 15px;
-  }
+/* Special styling just for the Admin button */
+.admin-btn {
+  color: #0369a1;
+  background-color: #f0f9ff;
+}
+
+.admin-btn:hover {
+  background-color: #e0f2fe;
+  color: #0c4a6e;
+}
+
+/* --- USER PROFILE & LOGOUT --- */
+.divider {
+  width: 2px;
+  height: 24px;
+  background-color: #e2e8f0;
+  margin: 0 0.5rem;
+  border-radius: 2px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.user-greeting {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.user-greeting strong {
+  color: #334155;
+}
+
+/* Beautiful custom logout button */
+.logout-btn {
+  background-color: #fff1f2;
+  color: #e11d48;
+}
+
+.logout-btn:hover {
+  background-color: #ffe4e6;
+  color: #be123c;
+}
+
+/* --- MAIN CONTENT AREA --- */
+.app-content {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
 }
