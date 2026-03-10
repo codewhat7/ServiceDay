@@ -4,7 +4,7 @@ import { ActivityListComponent } from './components/activity-list.component';
 import { ActivityDetailComponent } from './components/activity-detail.component';
 import { adminGuard } from './guards/admin.guard';
 import { staffGuard } from './guards/staff.guard';
-import { RegisteredHistoryComponent } from './components/activity-registered.component';
+import { ActivityRegisteredComponent } from './components/activity-registered.component';
 import { AdminEditComponent } from './admin/admin-edit.component';
 import { AdminScheduleComponent } from './admin/admin-schedule.component';
 import { AdminParticipantsComponent } from './admin/admin-participants.component';
@@ -19,7 +19,7 @@ export const routes: Routes = [
   },
   {
     path: 'history',
-    component: RegisteredHistoryComponent
+    component: ActivityRegisteredComponent
   },
   {
     path: 'activities/:id',

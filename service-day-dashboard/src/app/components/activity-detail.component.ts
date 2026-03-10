@@ -16,7 +16,7 @@ import { QRCodeComponent } from 'angularx-qrcode';
 })
 export class ActivityDetailComponent implements OnInit {
 
-  // 🌟 THE FIX: This is stored purely in temporary RAM, no localStorage needed!
+  // This is stored purely in temporary RAM, no localStorage needed!
   static lastRegistrationDate: string | null = null;
 
   qrData = 'Service Day Activity Entry';
@@ -110,9 +110,12 @@ export class ActivityDetailComponent implements OnInit {
       this.activityService.cancelRegistration(this.activity.id, this.currentUserId).subscribe(() => {
         this.isRegistered = false;
 
+        // 🌟 THE FIX: Free up their daily registration limit!
+        ActivityDetailComponent.lastRegistrationDate = null;
+
         this.notificationService.sendCancellationEmail(this.currentUserId!, this.activity!.title);
 
-        alert('Registration cancelled.');
+        alert('Registration cancelled. Your daily registration slot is now open again!');
         this.router.navigate(['/activities']);
       });
     }

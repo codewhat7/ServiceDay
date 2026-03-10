@@ -39,75 +39,72 @@
 
   <div class="activities-grid">
     @for (activity of getFilteredActivities(); track activity.id) {
-      <article class="activity-card">
 
-        <header class="card-header">
-          <h3>{{ activity.title }}</h3>
-          <span class="category-badge" [attr.data-category]="activity.category">
-            {{ activity.category }}
-          </span>
-        </header>
+      @if (!isDeadlinePassed(activity)) {
+        <article class="activity-card">
 
-        <p class="description">{{ activity.description }}</p>
-
-        <section class="activity-details">
-          <div class="detail-item">
-            <span class="label">📅 Date:</span>
-            <span>{{ activity.date | date: 'MMM dd, yyyy' }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="label">⏰ Time:</span>
-            <span>{{ activity.time }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="label">📍 Location:</span>
-            <span>{{ activity.location }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="label">🏢 Organization:</span>
-            <span>{{ activity.organization }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="label">💪 Difficulty:</span>
-            <span>{{ activity.difficulty }}</span>
-          </div>
-        </section>
-
-        <section class="slots-section">
-          <div class="slot-info">
-            <strong>Available Slots: {{ getAvailableSlots(activity) }} / {{ activity.totalSlots }}</strong>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill"
-                 [style.width.%]="(activity.registeredSlots / activity.totalSlots) * 100">
-            </div>
-          </div>
-        </section>
-
-        <div class="deadline-info">
-          @if (isDeadlinePassed(activity)) {
-            <span class="deadline-passed">
-              ❌ Registration Closed
+          <header class="card-header">
+            <h3>{{ activity.title }}</h3>
+            <span class="category-badge" [attr.data-category]="activity.category">
+              {{ activity.category }}
             </span>
-          } @else {
+          </header>
+
+          <p class="description">{{ activity.description }}</p>
+
+          <section class="activity-details">
+            <div class="detail-item">
+              <span class="label">📅 Date:</span>
+              <span>{{ activity.date | date: 'MMM dd, yyyy' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">⏰ Time:</span>
+              <span>{{ activity.time }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">📍 Location:</span>
+              <span>{{ activity.location }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">🏢 Organization:</span>
+              <span>{{ activity.organization }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">💪 Difficulty:</span>
+              <span>{{ activity.difficulty }}</span>
+            </div>
+          </section>
+
+          <section class="slots-section">
+            <div class="slot-info">
+              <strong>Available Slots: {{ getAvailableSlots(activity) }} / {{ activity.totalSlots }}</strong>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill"
+                   [style.width.%]="(activity.registeredSlots / activity.totalSlots) * 100">
+              </div>
+            </div>
+          </section>
+
+          <div class="deadline-info">
             <span class="deadline-ok">
               ✓ Deadline: {{ activity.registrationDeadline | date: 'MMM dd, yyyy' }}
             </span>
-          }
-        </div>
+          </div>
 
-        @if (isUserRegistered(activity)) {
-          <button class="btn-register btn-status-registered" disabled>
-            ✓ Registered
-          </button>
-        } @else {
-          <button [disabled]="isDeadlinePassed(activity) || getAvailableSlots(activity) === 0"
-                  class="btn-register"
-                  [routerLink]="['/activities', activity.id]">
-            View Details
-          </button>
-        }
-      </article>
+          @if (isUserRegistered(activity)) {
+            <button class="btn-register btn-status-registered" disabled>
+              ✓ Registered
+            </button>
+          } @else {
+            <button [disabled]="getAvailableSlots(activity) === 0"
+                    class="btn-register"
+                    [routerLink]="['/activities', activity.id]">
+              {{ getAvailableSlots(activity) === 0 ? 'Activity Full' : 'View Details' }}
+            </button>
+          }
+        </article>
+      }
     }
   </div>
 </main>

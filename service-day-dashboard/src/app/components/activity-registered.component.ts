@@ -6,15 +6,15 @@ import { AuthService } from '../services/auth.service';
 import { Activity } from '../models/activity.model';
 
 @Component({
-  selector: 'app-registered-history',
+  selector: 'app-activity-registered',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './activity-registered.component.html',
   styleUrls: ['./activity-registered.component.css']
 })
-export class RegisteredHistoryComponent implements OnInit {
+export class ActivityRegisteredComponent implements OnInit {
   myActivities: Activity[] = [];
-  loading = true;
+  currentUserId: number | null = null;
 
   constructor(
     private activityService: ActivityService,
@@ -22,20 +22,35 @@ export class RegisteredHistoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // 1. Listen for the logged-in user
     this.authService.currentUser$.subscribe(user => {
-      if (user) {
-        // 2. Fetch all activities
-        this.activityService.getActivities().subscribe(allActivities => {
-          // 3. Filter to only keep activities where this user's ID is in the array
-          this.myActivities = allActivities.filter(a =>
-            a.registeredStaffIds && a.registeredStaffIds.includes(user.id)
-          );
-          this.loading = false;
-        });
-      } else {
-        this.loading = false; // Stop loading if nobody is logged in
+      this.currentUserId = user ? user.id : null;
+      if (this.currentUserId) {
+        this.loadMyActivities();
       }
+    });
+  }
+
+  loadMyActivities(): void {
+    this.activityService.getActivities().subscribe(allActivities => {
+      // Find all activities where this user's ID is in the registeredStaffIds list
+      this.myActivities = allActivities.filter(activity =>
+        activity.registeredStaffIds && activity.registeredStaffIds.includes(this.currentUserId!)
+      );
+    });
+  }
+
+  // 🌟 THIS IS THE MAGIC FUNCTION!
+  // It hides any activity where the event date has already passed.
+  getVisibleActivities(): Activity[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset clock to midnight so today's events still show up!
+
+    return this.myActivities.filter(activity => {
+      const eventDate = new Date(activity.date);
+      eventDate.setHours(0, 0, 0, 0);
+
+      // If the eventDate is greater than or equal to today, keep it visible!
+      return eventDate >= today;
     });
   }
 }

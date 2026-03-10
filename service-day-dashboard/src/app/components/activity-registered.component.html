@@ -4,16 +4,16 @@
     <p>Track all the Service Day activities you have committed to.</p>
   </header>
 
-  @if (myActivities.length === 0) {
+  @if (getVisibleActivities().length === 0) {
     <div class="empty-state">
       <div class="empty-icon">📝</div>
-      <h3>No Registrations Yet</h3>
-      <p>You haven't signed up for any activities.</p>
+      <h3>No Upcoming Registrations</h3>
+      <p>You haven't signed up for any upcoming activities, or your past events are finished.</p>
       <button class="btn-primary" routerLink="/activities">Browse Activities</button>
     </div>
   } @else {
     <div class="activity-grid">
-      @for (activity of myActivities; track activity.id) {
+      @for (activity of getVisibleActivities(); track activity.id) {
         <article class="history-card">
           <div class="card-header">
             <span class="category-badge">{{ activity.category }}</span>
