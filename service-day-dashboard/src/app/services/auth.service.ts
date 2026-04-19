@@ -27,13 +27,12 @@ export class AuthService {
 
   // Your exact login logic, completely untouched!
   login(email: string, passwordTyped: string): Observable<boolean> {
-    return this.http.get<Employee[]>('assets/mock-data/employees.json').pipe(
+    // 🌟 Changed from 'assets/mock-data...' to your Node.js backend
+    return this.http.get<Employee[]>('http://localhost:3000/api/employees').pipe(
       map(employees => {
-        // Checks that BOTH the email and password match the JSON exactly
         const user = employees.find(e => e.email === email && e.password === passwordTyped);
 
         if (user) {
-          // 4. FIX: Write their details into the browser's permanent notebook!
           if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('mockLoggedInUser', JSON.stringify(user));
           }
@@ -57,5 +56,9 @@ export class AuthService {
   isAdmin(): boolean {
     const user = this.currentUserSubject.value;
     return user !== null && user.role === 'Admin';
+  }
+  // 🌟 NEW: Send a new user to the database
+  registerEmployee(newUserData: any): Observable<any> {
+    return this.http.post('http://localhost:3000/api/employees', newUserData);
   }
 }

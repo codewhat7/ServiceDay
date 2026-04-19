@@ -5,31 +5,34 @@
       <h2>Admin Dashboard</h2>
       <p>Manage activities and monitor volunteer participation</p>
     </div>
-    <button class="btn-create" routerLink="create">
-      <span>+</span> Create New Activity
-    </button>
-  </div>
-
-  <div class="broadcast-card">
-    <div class="broadcast-info">
-      <h3>📢 Broadcast Message</h3>
-      <p>Send an urgent update to all staff and volunteers.</p>
+    <div class="header-actions" style="display: flex; gap: 1rem;">
+      <button class="btn-create" routerLink="/admin/create-user" style="background: #f59e0b;">
+        <span>👥</span> Add New Staff
+      </button>
+      <button class="btn-create" routerLink="create">
+        <span>+</span> Create New Activity
+      </button>
     </div>
-    <div class="broadcast-actions">
+  </div> <div class="broadcast-card">
+  <div class="broadcast-info">
+    <h3>📢 Broadcast Message</h3>
+    <p>Send an urgent update to all staff and volunteers.</p>
+  </div>
+  <div class="broadcast-actions">
       <textarea
         class="broadcast-input"
         [(ngModel)]="broadcastMessageText"
         rows="2"
         placeholder="Type your message here...">
       </textarea>
-      <button
-        class="btn-broadcast"
-        (click)="sendBroadcast()"
-        [disabled]="!broadcastMessageText.trim()">
-        Send Broadcast
-      </button>
-    </div>
+    <button
+      class="btn-broadcast"
+      (click)="sendBroadcast()"
+      [disabled]="!broadcastMessageText.trim()">
+      Send Broadcast
+    </button>
   </div>
+</div>
 
   @if (!loading) {
     <div class="dashboard-stats">

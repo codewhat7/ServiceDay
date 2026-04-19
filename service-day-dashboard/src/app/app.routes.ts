@@ -8,6 +8,8 @@ import { ActivityRegisteredComponent } from './activities/activity-registered.co
 import { AdminEditComponent } from './admin/admin-edit.component';
 import { AdminScheduleComponent } from './admin/admin-schedule.component';
 import { AdminParticipantsComponent } from './admin/admin-participants.component';
+// 🌟 IMPORT THE NEW COMPONENT
+import { AdminCreateUserComponent } from './admin/admin-create-user.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -33,11 +35,8 @@ export const routes: Routes = [
     canActivate: [adminGuard]
   },
 
+  { path: 'admin/create-user', component: AdminCreateUserComponent },
   { path: 'admin/edit/:id', component: AdminEditComponent },
-
   { path: 'admin/schedule/:id', component: AdminScheduleComponent},
-
   { path: 'admin/participants/:id', component: AdminParticipantsComponent },
-
 ];
-

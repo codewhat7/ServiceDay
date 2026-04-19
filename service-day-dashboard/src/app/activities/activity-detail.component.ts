@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { ActivityService } from '../services/activity.service';
@@ -15,11 +15,7 @@ import { QRCodeComponent } from 'angularx-qrcode';
   styleUrls: ['./activity-detail.component.css']
 })
 export class ActivityDetailComponent implements OnInit {
-
-  // This is stored purely in temporary RAM, no localStorage needed!
   static lastRegistrationDate: string | null = null;
-
-  qrData = 'Service Day Activity Entry';
   activity: Activity | undefined;
   currentUserId: number | null = null;
   isRegistered = false;
@@ -29,19 +25,32 @@ export class ActivityDetailComponent implements OnInit {
     private router: Router,
     private activityService: ActivityService,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private zone: NgZone, // 🌟 Force zone execution
+    private cdr: ChangeDetectorRef // 🌟 Force UI repaint
   ) { }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       this.checkRegistrationStatus();
+      this.cdr.detectChanges();
     });
 
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.activityService.getActivityById(id).subscribe(data => {
-      this.activity = data;
-      this.checkRegistrationStatus();
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      if (id) {
+        this.activityService.getActivityById(id).subscribe({
+          next: (data) => {
+            // 🌟 THE FIX: Force the UI to update as soon as data arrives
+            this.zone.run(() => {
+              this.activity = data;
+              this.checkRegistrationStatus();
+              this.cdr.detectChanges();
+            });
+          }
+        });
+      }
     });
   }
 
@@ -50,58 +59,22 @@ export class ActivityDetailComponent implements OnInit {
       this.isRegistered = this.activity.registeredStaffIds.some(
         id => Number(id) === Number(this.currentUserId)
       );
-    } else {
-      this.isRegistered = false;
     }
   }
 
   register(): void {
-    if (!this.currentUserId || !this.activity) {
-      alert('❌ ERROR: Missing user or activity data.');
+    if (!this.currentUserId || !this.activity) return;
+    const today = new Date().toDateString();
+    if (ActivityDetailComponent.lastRegistrationDate === today) {
+      alert('⏳ You already registered for an activity today!');
       return;
     }
-
-    // --- RULE 1: STAFF CAN ONLY REGISTER ONCE PER DAY (Using RAM) ---
-    const today = new Date().toDateString();
-
-    if (ActivityDetailComponent.lastRegistrationDate === today) {
-      alert('⏳ REGISTRATION LIMIT: You have already registered for an activity today. Please come back tomorrow!');
-      return; // Stops the function instantly
-    }
-
-    // --- RULE 2: STAFF CANNOT REGISTER FOR CONFLICTING EVENT DATES ---
-    this.activityService.getActivities().subscribe(allActivities => {
-
-      const myActivities = allActivities.filter(a => {
-        if (!a.registeredStaffIds) return false;
-        return a.registeredStaffIds.some(id => Number(id) === Number(this.currentUserId));
-      });
-
-      const targetDate = new Date(this.activity!.date).toDateString();
-
-      const hasConflict = myActivities.some(myAct => {
-        const existingDate = new Date(myAct.date).toDateString();
-        return existingDate === targetDate;
-      });
-
-      if (hasConflict) {
-        alert(`❌ SCHEDULE CONFLICT: You are already registered for another activity on ${this.activity!.date}. Staff can only attend 1 activity per event date!`);
-        return; // Stops the function instantly
-      }
-
-      // --- SUCCESS: PROCEED WITH REGISTRATION ---
-      this.activityService.registerActivity(this.activity!.id, this.currentUserId!).subscribe(() => {
-        this.isRegistered = true;
-
-        // Apply the Rule 1 Stamp: Save today's date into temporary RAM
-        ActivityDetailComponent.lastRegistrationDate = today;
-
-        // Trigger the automated confirmation email
-        this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
-
-        alert('✅ Successfully registered! Returning to list...');
-        this.router.navigate(['/activities']);
-      });
+    this.activityService.registerActivity(this.activity.id, this.currentUserId).subscribe(() => {
+      this.isRegistered = true;
+      ActivityDetailComponent.lastRegistrationDate = today;
+      this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
+      alert('✅ Successfully registered!');
+      this.router.navigate(['/activities']);
     });
   }
 
@@ -109,13 +82,9 @@ export class ActivityDetailComponent implements OnInit {
     if (this.activity && this.currentUserId) {
       this.activityService.cancelRegistration(this.activity.id, this.currentUserId).subscribe(() => {
         this.isRegistered = false;
-
-        // 🌟 THE FIX: Free up their daily registration limit!
         ActivityDetailComponent.lastRegistrationDate = null;
-
         this.notificationService.sendCancellationEmail(this.currentUserId!, this.activity!.title);
-
-        alert('Registration cancelled. Your daily registration slot is now open again!');
+        alert('Registration cancelled.');
         this.router.navigate(['/activities']);
       });
     }

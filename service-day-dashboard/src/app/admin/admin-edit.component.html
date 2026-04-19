@@ -1,79 +1,85 @@
 <div class="edit-container">
-  <header class="edit-header">
-    <h2>✏️ Edit Activity Details</h2>
-    <p class="subtitle">Update information for: <strong>{{ activityData.title }}</strong></p>
-  </header>
-
-  <form (ngSubmit)="saveChanges()" #editForm="ngForm" class="edit-form">
-
-    <div class="form-group">
-      <label for="title">Activity Title</label>
-      <input type="text" id="title" name="title" [(ngModel)]="activityData.title" required placeholder="Enter title" class="form-control">
+  @if (loading) {
+    <div class="loading-state" style="text-align: center; padding: 3rem; color: #64748b;">
+      <p>Loading activity details...</p>
     </div>
+  } @else {
+    <header class="edit-header">
+      <h2>✏️ Edit Activity Details</h2>
+      <p class="subtitle">Update information for: <strong>{{ activityData.title }}</strong></p>
+    </header>
 
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea id="description" name="description" [(ngModel)]="activityData.description" required rows="3" placeholder="Enter description" class="form-control"></textarea>
-    </div>
+    <form (ngSubmit)="saveChanges()" #editForm="ngForm" class="edit-form">
 
-    <div class="form-row">
       <div class="form-group">
-        <label for="category">Category</label>
-        <select id="category" name="category" [(ngModel)]="activityData.category" required class="form-control">
-          <option value="Education">Education</option>
-          <option value="Environmental">Environmental</option>
-          <option value="Health">Health</option>
-        </select>
+        <label for="title">Activity Title</label>
+        <input type="text" id="title" name="title" [(ngModel)]="activityData.title" required placeholder="Enter title" class="form-control">
       </div>
-      <div class="form-group">
-        <label for="organization">Organization</label>
-        <input type="text" id="organization" name="organization" [(ngModel)]="activityData.organization" required placeholder="NGO Name" class="form-control">
-      </div>
-    </div>
 
-    <div class="form-row">
       <div class="form-group">
-        <label for="date">Event Date</label>
-        <input type="date" id="date" name="date" [(ngModel)]="activityData.date" required class="form-control">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" [(ngModel)]="activityData.description" required rows="3" placeholder="Enter description" class="form-control"></textarea>
       </div>
-      <div class="form-group">
-        <label for="time">Time</label>
-        <input type="text" id="time" name="time" [(ngModel)]="activityData.time" required placeholder="e.g. 09:00 AM - 12:00 PM" class="form-control">
-      </div>
-    </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="location">Location</label>
-        <input type="text" id="location" name="location" [(ngModel)]="activityData.location" required placeholder="Enter location" class="form-control">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" name="category" [(ngModel)]="activityData.category" required class="form-control">
+            <option value="Education">Education</option>
+            <option value="Environmental">Environmental</option>
+            <option value="Health">Health</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="organization">Organization</label>
+          <input type="text" id="organization" name="organization" [(ngModel)]="activityData.organization" required placeholder="NGO Name" class="form-control">
+        </div>
       </div>
-      <div class="form-group">
-        <label for="difficulty">Difficulty</label>
-        <select id="difficulty" name="difficulty" [(ngModel)]="activityData.difficulty" required class="form-control">
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Hard">Hard</option>
-        </select>
-      </div>
-    </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="totalSlots">Total Slots</label>
-        <input type="number" id="totalSlots" name="totalSlots" [(ngModel)]="activityData.totalSlots" required min="1" class="form-control">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="date">Event Date</label>
+          <input type="date" id="date" name="date" [(ngModel)]="activityData.date" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="time">Time</label>
+          <input type="text" id="time" name="time" [(ngModel)]="activityData.time" required placeholder="e.g. 09:00 AM - 12:00 PM" class="form-control">
+        </div>
       </div>
-      <div class="form-group">
-        <label for="registrationDeadline">Registration Deadline</label>
-        <input type="date" id="registrationDeadline" name="registrationDeadline" [(ngModel)]="activityData.registrationDeadline" required class="form-control">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" [(ngModel)]="activityData.location" required placeholder="Enter location" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty" name="difficulty" [(ngModel)]="activityData.difficulty" required class="form-control">
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <div class="form-actions">
-      <button type="button" class="btn-cancel" routerLink="/admin">Cancel</button>
-      <button type="submit" class="btn-save" [disabled]="!editForm.valid">
-        Save Changes
-      </button>
-    </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="totalSlots">Total Slots</label>
+          <input type="number" id="totalSlots" name="totalSlots" [(ngModel)]="activityData.totalSlots" required min="1" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="registrationDeadline">Registration Deadline</label>
+          <input type="date" id="registrationDeadline" name="registrationDeadline" [(ngModel)]="activityData.registrationDeadline" required class="form-control">
+        </div>
+      </div>
 
-  </form>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" routerLink="/admin">Cancel</button>
+        <button type="submit" class="btn-save" [disabled]="!editForm.valid">
+          Save Changes
+        </button>
+      </div>
+
+    </form>
+  }
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // 🌟 Added ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ActivityService } from '../services/activity.service';
@@ -18,38 +18,46 @@ export class ActivityRegisteredComponent implements OnInit {
 
   constructor(
     private activityService: ActivityService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef // 🌟 Injected ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    // 1. Get current user and load activities
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       if (this.currentUserId) {
         this.loadMyActivities();
       }
+      this.cdr.detectChanges(); // Force UI update when user data arrives
+    });
+
+    // 2. 🌟 Listen for updates (like if a user cancels an activity on the detail page)
+    this.activityService.activityUpdated$.subscribe(() => {
+      this.loadMyActivities();
     });
   }
 
   loadMyActivities(): void {
     this.activityService.getActivities().subscribe(allActivities => {
-      // Find all activities where this user's ID is in the registeredStaffIds list
+      // 🌟 THE FIX: Use strict Number comparison for your MongoDB numeric IDs
       this.myActivities = allActivities.filter(activity =>
-        activity.registeredStaffIds && activity.registeredStaffIds.includes(this.currentUserId!)
+        activity.registeredStaffIds &&
+        activity.registeredStaffIds.some(id => Number(id) === Number(this.currentUserId))
       );
+
+      this.cdr.detectChanges(); // 🌟 THE FIX: Force the UI to show the list immediately
     });
   }
 
-  // 🌟 THIS IS THE MAGIC FUNCTION!
-  // It hides any activity where the event date has already passed.
+  // Hides any activity where the event date has already passed.
   getVisibleActivities(): Activity[] {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset clock to midnight so today's events still show up!
+    today.setHours(0, 0, 0, 0);
 
     return this.myActivities.filter(activity => {
       const eventDate = new Date(activity.date);
       eventDate.setHours(0, 0, 0, 0);
-
-      // If the eventDate is greater than or equal to today, keep it visible!
       return eventDate >= today;
     });
   }

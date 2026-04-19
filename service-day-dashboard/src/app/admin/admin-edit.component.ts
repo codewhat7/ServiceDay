@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core'; // 🌟 Added NgZone and ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -10,29 +10,48 @@ import { Activity } from '../models/activity.model';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './admin-edit.component.html',
-  styleUrl:'./admin-edit.component.css'// <-- Updated to match the new HTML file name
+  styleUrl: './admin-edit.component.css'
 })
 export class AdminEditComponent implements OnInit {
   activityId!: number;
   activityData: Partial<Activity> = {};
+  loading = true; // 🌟 Added loading state
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    private zone: NgZone, // 🌟 Injected NgZone
+    private cdr: ChangeDetectorRef // 🌟 Injected ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    // 1. Get the ID from the URL
-    this.activityId = Number(this.route.snapshot.paramMap.get('id'));
+    // 1. 🌟 THE FIX: Subscribe to paramMap instead of using snapshot
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.activityId = Number(id); // 🌟 Ensure numeric ID conversion for MongoDB
 
-    // 2. Fetch the existing details
-    this.activityService.getActivityById(this.activityId).subscribe(data => {
-      if (data) {
-        this.activityData = { ...data };
-      } else {
-        alert('Activity not found!');
-        this.router.navigate(['/activities']);
+        // 2. Fetch the existing details
+        this.activityService.getActivityById(this.activityId).subscribe({
+          next: (data) => {
+            if (data) {
+              // 🌟 THE FIX: Force the UI to populate fields instantly
+              this.zone.run(() => {
+                this.activityData = { ...data };
+                this.loading = false;
+                this.cdr.detectChanges();
+              });
+            } else {
+              alert('Activity not found!');
+              this.router.navigate(['/activities']);
+            }
+          },
+          error: (err) => {
+            console.error('❌ Error fetching activity:', err);
+            this.loading = false;
+          }
+        });
       }
     });
   }

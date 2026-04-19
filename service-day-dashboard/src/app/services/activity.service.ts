@@ -1,156 +1,71 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { isPlatformBrowser } from '@angular/common';
-import { Observable, of, Subject } from 'rxjs';
-import { delay, tap, catchError } from 'rxjs/operators';
+import { Observable, Subject, tap } from 'rxjs'; // 🌟 Added Subject and tap
 import { Activity } from '../models/activity.model';
 
 @Injectable({
-  providedIn: 'root' // <-- CRITICAL: This makes the "Whiteboard" permanent!
+  providedIn: 'root'
 })
 export class ActivityService {
-  private activitiesUrl = 'assets/mock-data/activities.json';
-  private cachedActivities: Activity[] = [];
-  private activityUpdatedSubject = new Subject<void>();
-  public activityUpdated$ = this.activityUpdatedSubject.asObservable();
 
-  constructor(
-    private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+  // 🌟 The master tunnel to your real database!
+  private apiUrl = 'http://localhost:3000/api/activities';
 
+  // 🌟 THE FIX: This creates the "radio station" property your list component is looking for.
+  // It allows components to "listen" for data changes in real-time.
+  public activityUpdated$ = new Subject<void>();
+
+  constructor(private http: HttpClient) {}
+
+  /**
+   * Helper method to trigger a refresh across the entire application.
+   */
+  notifyUpdate(): void {
+    this.activityUpdated$.next();
+  }
+
+  // 1. Get ALL activities (Used by Dashboards)
   getActivities(): Observable<Activity[]> {
-    if (!isPlatformBrowser(this.platformId)) {
-      return of([]);
-    }
-
-    if (this.cachedActivities.length > 0) {
-      return of(this.cachedActivities);
-    }
-
-    return this.http.get<Activity[]>(this.activitiesUrl).pipe(
-      tap(data => {
-        this.cachedActivities = data;
-        console.log('✅ SUCCESS! JSON Data loaded into cache');
-      }),
-      catchError(error => {
-        console.error('❌ HTTP Error! Angular cannot find the file:', error);
-        return of([]);
-      })
-    );
+    return this.http.get<Activity[]>(this.apiUrl);
   }
 
-  getActivityById(id: number): Observable<Activity | undefined> {
-    if (!isPlatformBrowser(this.platformId)) {
-      return of(undefined);
-    }
-
-    return new Observable(observer => {
-      this.getActivities().subscribe({
-        next: (activities) => {
-          const activity = activities.find(a => a.id === id);
-          observer.next(activity);
-          observer.complete();
-        },
-        error: (error) => observer.error(error)
-      });
-    });
+  // 2. Get ONE activity (Used by ActivityDetailComponent)
+  getActivityById(id: number): Observable<Activity> {
+    return this.http.get<Activity>(`${this.apiUrl}/${id}`);
   }
 
+  // 3. Create an activity (Used by Admin Create)
+  createActivity(activityData: any): Observable<Activity> {
+    return this.http.post<Activity>(this.apiUrl, activityData)
+      .pipe(tap(() => this.notifyUpdate())); // Broadcast update on success
+  }
+
+  // 4. Update an activity (Used by Admin Edit)
+  updateActivity(id: number, activityData: any): Observable<Activity> {
+    return this.http.put<Activity>(`${this.apiUrl}/${id}`, activityData)
+      .pipe(tap(() => this.notifyUpdate())); // Broadcast update on success
+  }
+
+  // 5. Delete an activity (Used by Admin Dashboard)
+  deleteActivity(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`)
+      .pipe(tap(() => this.notifyUpdate())); // Broadcast update on success
+  }
+
+  // ==========================================
+  // REGISTRATION LOGIC (Used by ActivityDetail)
+  // ==========================================
+
+  // 6. Register a staff member
   registerActivity(activityId: number, employeeId: number): Observable<any> {
-    return of({ success: true, message: 'Registration successful' }).pipe(
-      delay(800),
-      tap(() => {
-        const activity = this.cachedActivities.find(a => a.id === activityId);
-        if (activity) {
-          if (!activity.registeredStaffIds) {
-            activity.registeredStaffIds = [];
-          }
-          if (!activity.registeredStaffIds.includes(employeeId)) {
-            activity.registeredStaffIds.push(employeeId);
-            activity.registeredSlots = (activity.registeredSlots || 0) + 1;
-          }
-        }
-        console.log(`Employee ${employeeId} registered for activity ${activityId}`);
-        this.activityUpdatedSubject.next();
-      })
-    );
+    // We send the employeeId in the body so Node.js can read `req.body.employeeId`
+    return this.http.post(`${this.apiUrl}/${activityId}/register`, { employeeId })
+      .pipe(tap(() => this.notifyUpdate())); // Broadcast update so list shows new slot count
   }
 
+  // 7. Cancel a registration
   cancelRegistration(activityId: number, employeeId: number): Observable<any> {
-    return of({ success: true }).pipe(
-      delay(800),
-      tap(() => {
-        const activity = this.cachedActivities.find(a => a.id === activityId);
-        if (activity && activity.registeredStaffIds) {
-          activity.registeredStaffIds = activity.registeredStaffIds.filter(id => id !== employeeId);
-          if (activity.registeredSlots && activity.registeredSlots > 0) {
-            activity.registeredSlots -= 1;
-          }
-        }
-        console.log(`Employee ${employeeId} cancelled registration for activity ${activityId}`);
-        this.activityUpdatedSubject.next();
-      })
-    );
-  }
-  deleteActivity(activityId: number): Observable<any> {
-    return of({ success: true, message: 'Activity deleted' }).pipe(
-      delay(800),
-      tap(() => {
-        this.cachedActivities = this.cachedActivities.filter(a => a.id !== activityId);
-        console.log(`Admin deleted activity ${activityId}`);
-        this.activityUpdatedSubject.next();
-      })
-    );
-  }
-
-  createActivity(newActivityData: any): Observable<any> {
-    return of({ success: true, message: 'Activity created' }).pipe(
-      delay(800),
-      tap(() => {
-        const maxId = this.cachedActivities.length > 0
-          ? Math.max(...this.cachedActivities.map(a => a.id))
-          : 0;
-
-        const activityToAdd: Activity = {
-          ...newActivityData,
-          id: maxId + 1,
-          registeredSlots: 0,
-          registeredStaffIds: []
-        };
-
-        this.cachedActivities.push(activityToAdd);
-        console.log(`Admin created new activity: ${activityToAdd.title}`);
-        this.activityUpdatedSubject.next();
-      })
-    );
-  }
-  updateActivity(id: number, updatedData: any): Observable<any> {
-    return of({ success: true, message: 'Activity updated' }).pipe(
-      delay(800),
-      tap(() => {
-        // 1. Find the exact position of the activity on the whiteboard
-        const index = this.cachedActivities.findIndex(a => a.id === id);
-
-        if (index !== -1) {
-          // 2. Overwrite the old data with the new data, but keep the registered users!
-          this.cachedActivities[index] = {
-            ...this.cachedActivities[index],
-            ...updatedData
-          };
-          console.log(`Admin updated activity: ${id}`);
-
-          // 3. Tell the app to refresh the screen
-          this.activityUpdatedSubject.next();
-        }
-      })
-    );
-  }
-  sendManualReminder(activityId: number): Observable<any> {
-    // Simulating an API call to an email/notification server
-    console.log(`System: Broadcasting reminder for Activity ID ${activityId} to available employees.`);
-    return of({ success: true, message: 'Reminders sent successfully' }).pipe(
-      delay(800) // 800ms fake loading delay
-    );
+    return this.http.post(`${this.apiUrl}/${activityId}/cancel`, { employeeId })
+      .pipe(tap(() => this.notifyUpdate())); // Broadcast update so list shows freed slot
   }
 }
