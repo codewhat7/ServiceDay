@@ -15,7 +15,10 @@ import { QRCodeComponent } from 'angularx-qrcode';
   styleUrls: ['./activity-detail.component.css']
 })
 export class ActivityDetailComponent implements OnInit {
-  static lastRegistrationDate: string | null = null;
+
+  // 🌟 THE FIX: Removed 'static lastRegistrationDate'.
+  // We now check the database instead of a shared global variable.
+
   activity: Activity | undefined;
   currentUserId: number | null = null;
   isRegistered = false;
@@ -26,8 +29,8 @@ export class ActivityDetailComponent implements OnInit {
     private activityService: ActivityService,
     private authService: AuthService,
     private notificationService: NotificationService,
-    private zone: NgZone, // 🌟 Force zone execution
-    private cdr: ChangeDetectorRef // 🌟 Force UI repaint
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -42,7 +45,6 @@ export class ActivityDetailComponent implements OnInit {
       if (id) {
         this.activityService.getActivityById(id).subscribe({
           next: (data) => {
-            // 🌟 THE FIX: Force the UI to update as soon as data arrives
             this.zone.run(() => {
               this.activity = data;
               this.checkRegistrationStatus();
@@ -64,17 +66,34 @@ export class ActivityDetailComponent implements OnInit {
 
   register(): void {
     if (!this.currentUserId || !this.activity) return;
-    const today = new Date().toDateString();
-    if (ActivityDetailComponent.lastRegistrationDate === today) {
-      alert('⏳ You already registered for an activity today!');
-      return;
-    }
-    this.activityService.registerActivity(this.activity.id, this.currentUserId).subscribe(() => {
-      this.isRegistered = true;
-      ActivityDetailComponent.lastRegistrationDate = today;
-      this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
-      alert('✅ Successfully registered!');
-      this.router.navigate(['/activities']);
+
+    // 1. 🌟 Fetch all activities to see what this specific user has joined
+    this.activityService.getActivities().subscribe(allActivities => {
+
+      // Filter activities where THIS user is a participant
+      const myRegistrations = allActivities.filter(a =>
+        a.registeredStaffIds?.some(id => Number(id) === Number(this.currentUserId))
+      );
+
+      // 2. 🌟 DATE CHECK: See if the user is already booked for THIS activity's date
+      const targetDate = new Date(this.activity!.date).toDateString();
+
+      const isAlreadyBookedToday = myRegistrations.some(reg =>
+        new Date(reg.date).toDateString() === targetDate
+      );
+
+      if (isAlreadyBookedToday) {
+        alert(`❌ CONFLICT: You are already registered for an activity on ${this.activity!.date}.`);
+        return;
+      }
+
+      // 3. If no conflict, proceed with registration
+      this.activityService.registerActivity(this.activity!.id, this.currentUserId!).subscribe(() => {
+        this.isRegistered = true;
+        this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
+        alert('✅ Successfully registered!');
+        this.router.navigate(['/activities']);
+      });
     });
   }
 
@@ -82,7 +101,6 @@ export class ActivityDetailComponent implements OnInit {
     if (this.activity && this.currentUserId) {
       this.activityService.cancelRegistration(this.activity.id, this.currentUserId).subscribe(() => {
         this.isRegistered = false;
-        ActivityDetailComponent.lastRegistrationDate = null;
         this.notificationService.sendCancellationEmail(this.currentUserId!, this.activity!.title);
         alert('Registration cancelled.');
         this.router.navigate(['/activities']);
