@@ -45,16 +45,19 @@ app.post('/api/employees', async (req, res) => {
 
 app.get('/api/employees', async (req, res) => {
     try {
+        // Fetch all employees from the MongoDB collection
         const employees = await Employee.find();
-        if (!email || !email.includes('@') || !email.toLowerCase().endsWith('.com')) {
-            return res.status(400).json({ message: "Invalid email format. Must end with .com" });
-        }
         res.json(employees);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching employees' });
+        // 🌟 THIS PRINTS THE ERROR IN YOUR VS CODE TERMINAL
+        console.error("❌ ERROR FETCHING EMPLOYEES:", error.message);
+
+        res.status(500).json({
+            message: "Server failed to fetch employees",
+            error: error.message
+        });
     }
 });
-
 // This is the correct route for showing participant NAMES
 app.get('/api/activities/:id/participants', async (req, res) => {
     try {
