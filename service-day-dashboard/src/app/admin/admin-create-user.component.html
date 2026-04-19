@@ -1,0 +1,65 @@
+<div class="page-container">
+  <div class="form-card">
+
+    <div class="form-header">
+      <h2>Create New Account</h2>
+      <p>Add a new employee or administrator to the system.</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #userForm="ngForm" class="user-form">
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="newUser.name" name="name" class="form-input" required placeholder="e.g. John Doe">
+      </div>
+
+      <div class="form-group">
+        <label>Work Email</label>
+        <input type="email"
+               [(ngModel)]="newUser.email"
+               name="email"
+               class="form-input"
+               required
+               #email="ngModel"
+               pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$"
+               placeholder="user@example.com">
+
+        @if (email.invalid && (email.dirty || email.touched)) {
+          <div class="error-msg" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">
+            @if (email.errors?.['required']) { Email is required. }
+            @if (email.errors?.['pattern']) { ⚠️ Invalid format: Must include @ and end with .com }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Department</label>
+        <input type="text" [(ngModel)]="newUser.department" name="department" class="form-input" required placeholder="e.g. HR, IT, Finance">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label>System Privilege</label>
+          <select [(ngModel)]="newUser.role" name="role" class="form-input" required>
+            <option value="" disabled selected>-- Select a Role --</option>
+            <option value="Staff">Standard Employee</option>
+            <option value="Admin">System Admin</option>
+          </select>
+        </div>
+
+        <div class="form-group half-width">
+          <label>Account Password</label>
+          <input type="text" [(ngModel)]="newUser.password" name="password" class="form-input" required placeholder="Type a secure password...">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="!userForm.valid || isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Create Account' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
