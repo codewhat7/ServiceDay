@@ -1,0 +1,38 @@
+<div class="inbox-container">
+  <div class="inbox-header">
+    <h2>Your Inbox</h2>
+    <p>Stay updated on your Service Day registrations and updates.</p>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">Updating notifications...</div>
+  } @else if (notifications.length === 0) {
+    <div class="empty-state">
+      <div class="icon">📬</div>
+      <p>No notifications yet. Your alerts will appear here.</p>
+    </div>
+  } @else {
+    <div class="notif-list">
+      @for (n of notifications; track n._id) {
+        <div class="notif-card"
+             [class.unread]="!n.isRead"
+             (click)="handleNotifClick(n)">
+
+          <div class="notif-meta">
+            <span class="type-tag" [attr.data-type]="n.type">{{ n.type }}</span>
+            <span class="time">{{ n.createdAt | date:'MMM d, h:mm a' }}</span>
+          </div>
+
+          <div class="notif-content">
+            <h3>{{ n.title }}</h3>
+            <p>{{ n.message }}</p>
+          </div>
+
+          @if (!n.isRead) {
+            <div class="new-dot"></div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

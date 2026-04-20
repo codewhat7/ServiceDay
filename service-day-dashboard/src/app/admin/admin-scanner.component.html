@@ -1,0 +1,21 @@
+<div class="scanner-container">
+  <header class="scanner-header">
+    <h2>📷 Event Check-In Scanner</h2>
+    <p>Point the camera at an employee's QR code to record attendance.</p>
+  </header>
+
+  <div class="status-box"
+       [class.success]="statusMessage.includes('✅')"
+       [class.error]="statusMessage.includes('❌')">
+    <h3>{{ statusMessage }}</h3>
+  </div>
+
+  <div class="camera-frame">
+      <zxing-scanner
+        [enable]="true"
+        (scanSuccess)="handleScanSuccess($event)">
+      </zxing-scanner>
+
+  </div>
+</div>
+
