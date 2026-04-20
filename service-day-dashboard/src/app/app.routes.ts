@@ -8,8 +8,9 @@ import { ActivityRegisteredComponent } from './activities/activity-registered.co
 import { AdminEditComponent } from './admin/admin-edit.component';
 import { AdminScheduleComponent } from './admin/admin-schedule.component';
 import { AdminParticipantsComponent } from './admin/admin-participants.component';
-// 🌟 IMPORT THE NEW COMPONENT
 import { AdminCreateUserComponent } from './admin/admin-create-user.component';
+import { NotificationListComponent } from './notifications/notification-list.component';
+import {AdminScannerComponent } from './admin/admin-scanner.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -29,11 +30,18 @@ export const routes: Routes = [
     canActivate: [staffGuard]
   },
 
+  { path: 'notifications',
+    component: NotificationListComponent,
+    canActivate: [staffGuard]
+  },
+
   {
     path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
     canActivate: [adminGuard]
   },
+
+  { path: 'admin/scanner', component: AdminScannerComponent },
 
   { path: 'admin/create-user', component: AdminCreateUserComponent },
   { path: 'admin/edit/:id', component: AdminEditComponent },

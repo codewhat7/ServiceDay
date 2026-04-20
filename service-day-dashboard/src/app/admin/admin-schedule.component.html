@@ -1,33 +1,45 @@
-<div class="schedule-container">
-  <header class="schedule-header">
-    <h2>⏰ Automated Reminders</h2>
-    <p class="subtitle">
-      Configure notification triggers for:<br>
-      <strong>{{ activityData.title }}</strong>
-    </p>
-  </header>
+@if (isLoading) {
+  <div class="schedule-container" style="text-align: center; padding: 3rem;">
+    <h2>⏳ Loading schedule data...</h2>
+  </div>
+}
+@else {
+  <div class="schedule-container">
+    <header class="schedule-header">
+      <h2>⏰ Automated Reminders</h2>
+      <p class="subtitle">
+        Configure notification triggers for:<br>
+        <strong>{{ activityData.title }}</strong>
+      </p>
+    </header>
 
-  <form (ngSubmit)="saveSchedule()" class="schedule-form">
-    <div class="checkbox-group">
-      <label class="checkbox-item">
-        <input type="checkbox" name="oneWeek" [(ngModel)]="activityData.reminders!.oneWeek">
-        <span>1 Week Before Event</span>
-      </label>
+    <form (ngSubmit)="saveSchedule()" class="schedule-form">
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="oneWeek" [(ngModel)]="activityData.reminders!.oneWeek">
+          <span>1 Week Before Event</span>
+        </label>
 
-      <label class="checkbox-item">
-        <input type="checkbox" name="threeDays" [(ngModel)]="activityData.reminders!.threeDays">
-        <span>3 Days Before Event</span>
-      </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="threeDays" [(ngModel)]="activityData.reminders!.threeDays">
+          <span>3 Days Before Event</span>
+        </label>
 
-      <label class="checkbox-item">
-        <input type="checkbox" name="oneDay" [(ngModel)]="activityData.reminders!.oneDay">
-        <span>1 Day Before Event</span>
-      </label>
-    </div>
+        <label class="checkbox-item">
+          <input type="checkbox" name="oneDay" [(ngModel)]="activityData.reminders!.oneDay">
+          <span>1 Day Before Event</span>
+        </label>
 
-    <div class="action-buttons">
-      <button type="button" class="btn-cancel" routerLink="/admin">Cancel</button>
-      <button type="submit" class="btn-save">Save Schedule</button>
-    </div>
-  </form>
-</div>
+        <label class="checkbox-item">
+          <input type="checkbox" name="oneSecond" [(ngModel)]="activityData.reminders!.oneSecond">
+          <span>1 Second Before Event (Test Mode)</span>
+        </label>
+      </div>
+
+      <div class="action-buttons">
+        <button type="button" class="btn-cancel" routerLink="/admin">Cancel</button>
+        <button type="submit" class="btn-save">Save Schedule</button>
+      </div>
+    </form>
+  </div>
+}

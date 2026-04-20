@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // 🌟 Add ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -15,38 +15,57 @@ import { Activity } from '../models/activity.model';
 export class AdminScheduleComponent implements OnInit {
   activityId!: number;
   activityData: Partial<Activity> = {};
+  isLoading = true;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    private cdr: ChangeDetectorRef // 🌟 1. Inject it here!
   ) {}
 
   ngOnInit(): void {
-    // 1. Grab the ID from the URL (e.g., if you clicked Activity #2)
     this.activityId = Number(this.route.snapshot.paramMap.get('id'));
 
-    // 2. Fetch the specific activity data
-    this.activityService.getActivityById(this.activityId).subscribe(data => {
-      if (data) {
-        this.activityData = { ...data };
+    this.activityService.getActivityById(this.activityId).subscribe({
+      next: (data) => {
+        if (data) {
+          this.activityData = { ...data };
+          if (!this.activityData.reminders) {
+            this.activityData.reminders = { oneWeek: false, threeDays: false, oneDay: false, oneSecond: false };
+          }
 
-        // 3. If the activity doesn't have a schedule yet, create a blank one safely
-        if (!this.activityData.reminders) {
-          this.activityData.reminders = { oneWeek: false, threeDays: false, oneDay: false };
+          this.isLoading = false;
+          this.cdr.detectChanges(); // 🌟 2. Force the screen to hide the loading text!
+
+        } else {
+          alert('Activity not found!');
+          this.router.navigate(['/admin']);
         }
-      } else {
-        alert('Activity not found!');
+      },
+      error: (err) => {
+        console.error("Error fetching activity:", err);
+        this.isLoading = false;
+        this.cdr.detectChanges(); // 🌟 Force update on error too
+        alert("Failed to load schedule.");
         this.router.navigate(['/admin']);
       }
     });
   }
-
   saveSchedule(): void {
-    // 4. Save the new checkbox settings to the service
-    this.activityService.updateActivity(this.activityId, this.activityData).subscribe(() => {
-      alert(`✅ Automated reminders saved for ${this.activityData.title}!`);
-      this.router.navigate(['/admin']);
+    // 🌟 THE FIX: We completely removed `this.isLoading = true` from here.
+    // Now, the form stays on the screen while Node.js saves the data!
+
+    this.activityService.updateActivity(this.activityId, this.activityData).subscribe({
+      next: () => {
+        // Pop the success message, then instantly redirect to the dashboard
+        alert(`✅ Automated reminders saved for ${this.activityData.title}!`);
+        this.router.navigate(['/admin']);
+      },
+      error: (err) => {
+        console.error("Save failed:", err);
+        alert("❌ Failed to save schedule.");
+      }
     });
   }
 }

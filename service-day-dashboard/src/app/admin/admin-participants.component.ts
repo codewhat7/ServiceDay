@@ -33,7 +33,7 @@ export class AdminParticipantsComponent implements OnInit {
     this.loading = true;
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    // 1. First, get the Activity to show the Title and total count
+    // 1. Get the Activity to show Title and total count
     this.activityService.getActivityById(id).subscribe(act => {
       if (!act) {
         this.router.navigate(['/admin']);
@@ -41,8 +41,7 @@ export class AdminParticipantsComponent implements OnInit {
       }
       this.activity = act;
 
-      // 2. 🌟 THE FIX: Fetch the actual participants from the database
-      // This replaces the "random name generator" logic
+      // 2. Fetch the actual participants from the database
       this.http.get<Employee[]>(`http://localhost:3000/api/activities/${id}/participants`).subscribe({
         next: (realParticipants) => {
           this.participants = realParticipants;
@@ -58,16 +57,24 @@ export class AdminParticipantsComponent implements OnInit {
     });
   }
 
+  // 🌟 THE FIX: Wire this to our new dedicated removal route!
   removeStaff(staffId: number): void {
     if (isPlatformBrowser(this.platformId)) {
       if (confirm('Are you sure you want to remove this staff member from the activity?')) {
-        this.activity.registeredStaffIds = this.activity.registeredStaffIds!.filter(id => Number(id) !== Number(staffId));
-        this.activity.registeredSlots = this.activity.registeredStaffIds.length;
 
-        this.activityService.updateActivity(this.activity.id, this.activity).subscribe(() => {
-          alert('✅ Staff member removed successfully!');
-          this.loadData();
+        // Use the new service method we added to activity.service.ts
+        this.activityService.removeParticipantByAdmin(this.activity.id, staffId).subscribe({
+          next: () => {
+            alert('✅ Staff member removed successfully!');
+            // Reload the data from the server so the table and slot count instantly update
+            this.loadData();
+          },
+          error: (err) => {
+            console.error('🔥 Error removing staff:', err);
+            alert('❌ Failed to remove staff member. Check console for details.');
+          }
         });
+
       }
     }
   }

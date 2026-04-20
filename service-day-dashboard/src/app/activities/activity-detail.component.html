@@ -14,13 +14,6 @@
           <p><strong>📍 Location:</strong> {{ activity.location }}</p>
           <p><strong>👥 Slots Filled:</strong> {{ activity.registeredSlots }} / {{ activity.totalSlots }}</p>
         </div>
-
-        @if (isRegistered) {
-          <div class="qr-container">
-            <p class="qr-label">Scan to Check-in</p>
-            <qrcode [qrdata]="activity.title" [width]="140" [margin]="2"></qrcode>
-          </div>
-        }
       </div>
 
       <div class="description-box">

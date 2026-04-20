@@ -39,11 +39,11 @@
       <div class="form-row">
         <div class="form-group">
           <label for="date">Event Date</label>
-          <input type="date" id="date" name="date" [(ngModel)]="activityData.date" required class="form-control">
+          <input type="date" name="date" [(ngModel)]="activityData.date" required class="form-control">
         </div>
         <div class="form-group">
-          <label for="time">Time</label>
-          <input type="text" id="time" name="time" [(ngModel)]="activityData.time" required placeholder="e.g. 09:00 AM - 12:00 PM" class="form-control">
+          <label for="time">Start Time (24h)</label>
+          <input type="time" name="time" [(ngModel)]="activityData.time" required class="form-control">
         </div>
       </div>
 

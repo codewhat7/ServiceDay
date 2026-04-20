@@ -5,19 +5,15 @@ import { ActivityService } from '../services/activity.service';
 import { AuthService } from '../services/auth.service';
 import { Activity } from '../models/activity.model';
 import { NotificationService } from '../services/notification.service';
-import { QRCodeComponent } from 'angularx-qrcode';
 
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, QRCodeComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './activity-detail.component.html',
   styleUrls: ['./activity-detail.component.css']
 })
 export class ActivityDetailComponent implements OnInit {
-
-  // 🌟 THE FIX: Removed 'static lastRegistrationDate'.
-  // We now check the database instead of a shared global variable.
 
   activity: Activity | undefined;
   currentUserId: number | null = null;
@@ -67,15 +63,19 @@ export class ActivityDetailComponent implements OnInit {
   register(): void {
     if (!this.currentUserId || !this.activity) return;
 
-    // 1. 🌟 Fetch all activities to see what this specific user has joined
     this.activityService.getActivities().subscribe(allActivities => {
 
-      // Filter activities where THIS user is a participant
       const myRegistrations = allActivities.filter(a =>
         a.registeredStaffIds?.some(id => Number(id) === Number(this.currentUserId))
       );
 
-      // 2. 🌟 DATE CHECK: See if the user is already booked for THIS activity's date
+      // 🌟 ADDED: THE "STRICT 1 ACTIVITY" FRONTEND CHECK
+      // This stops the user if they have ANY existing registration in the system.
+      if (myRegistrations.length > 0) {
+        alert("Employee had register an activity today so cant register for another one");
+        return;
+      }
+
       const targetDate = new Date(this.activity!.date).toDateString();
 
       const isAlreadyBookedToday = myRegistrations.some(reg =>
@@ -87,23 +87,36 @@ export class ActivityDetailComponent implements OnInit {
         return;
       }
 
-      // 3. If no conflict, proceed with registration
-      this.activityService.registerActivity(this.activity!.id, this.currentUserId!).subscribe(() => {
-        this.isRegistered = true;
-        this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
-        alert('✅ Successfully registered!');
-        this.router.navigate(['/activities']);
+      this.activityService.registerActivity(this.activity!.id, this.currentUserId!).subscribe({
+        next: () => {
+          this.isRegistered = true;
+          this.notificationService.sendRegistrationEmail(this.currentUserId!, this.activity!.title);
+          alert('✅ Successfully registered!');
+          this.router.navigate(['/activities']);
+        },
+        error: (err: any) => {
+          // This catches the "Limit Reached" error from your server.js
+          const errorMessage = err.error?.error || '❌ Registration failed.';
+          alert(errorMessage);
+        }
       });
     });
   }
 
   cancel(): void {
     if (this.activity && this.currentUserId) {
-      this.activityService.cancelRegistration(this.activity.id, this.currentUserId).subscribe(() => {
-        this.isRegistered = false;
-        this.notificationService.sendCancellationEmail(this.currentUserId!, this.activity!.title);
-        alert('Registration cancelled.');
-        this.router.navigate(['/activities']);
+      this.activityService.cancelRegistration(this.activity.id, this.currentUserId).subscribe({
+        next: () => {
+          this.isRegistered = false;
+          this.notificationService.sendCancellationEmail(this.currentUserId!, this.activity!.title);
+          alert('Registration cancelled.');
+          this.router.navigate(['/activities']);
+        },
+        // 🌟 ADDED: Error handling for cancellation
+        error: (err: any) => {
+          console.error("Cancellation failed", err);
+          alert('❌ Failed to cancel registration.');
+        }
       });
     }
   }

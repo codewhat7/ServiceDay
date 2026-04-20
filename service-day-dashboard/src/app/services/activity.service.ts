@@ -68,4 +68,13 @@ export class ActivityService {
     return this.http.post(`${this.apiUrl}/${activityId}/cancel`, { employeeId })
       .pipe(tap(() => this.notifyUpdate())); // Broadcast update so list shows freed slot
   }
+
+  removeParticipantByAdmin(activityId: number, employeeId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${activityId}/participants/${employeeId}`).pipe(
+      tap(() => {
+        // 🌟 THE FIX: Matches your exact variable name!
+        this.activityUpdated$.next();
+      })
+    );
+  }
 }

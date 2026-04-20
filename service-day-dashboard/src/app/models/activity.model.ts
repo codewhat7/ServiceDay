@@ -16,6 +16,7 @@ export interface Activity {
     oneWeek: boolean;
     threeDays: boolean;
     oneDay: boolean;
+    oneSecond:boolean;
   };
 }
 

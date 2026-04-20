@@ -5,12 +5,16 @@
       <h2>Admin Dashboard</h2>
       <p>Manage activities and monitor volunteer participation</p>
     </div>
+
     <div class="header-actions" style="display: flex; gap: 1rem;">
       <button class="btn-create" routerLink="/admin/create-user" style="background: #f59e0b;">
         <span>👥</span> Add New Staff
       </button>
       <button class="btn-create" routerLink="create">
         <span>+</span> Create New Activity
+      </button>
+      <button class="btn-scan" routerLink="/admin/scanner">
+        📷 Launch QR Scanner
       </button>
     </div>
   </div> <div class="broadcast-card">
@@ -28,8 +32,8 @@
     <button
       class="btn-broadcast"
       (click)="sendBroadcast()"
-      [disabled]="!broadcastMessageText.trim()">
-      Send Broadcast
+      [disabled]="isSending || !broadcastMessageText.trim()">
+      {{ isSending ? 'Sending...' : 'Send Broadcast' }}
     </button>
   </div>
 </div>
@@ -114,11 +118,6 @@
                   <button class="btn-action btn-participants" [routerLink]="['/admin/participants', activity.id]" title="Participants">
                     👥 Participants
                   </button>
-                  @if ((activity.registeredSlots || 0) < activity.totalSlots) {
-                    <button class="btn-action btn-remind" (click)="sendReminder(activity)" title="Send Reminder">
-                      🔔 Remind
-                    </button>
-                  }
                   <button class="btn-action btn-delete" (click)="deleteActivity(activity.id)" title="Delete">
                     🗑️ Delete
                   </button>

@@ -41,9 +41,10 @@
           <label for="date">Event Date</label>
           <input type="date" id="date" name="date" [(ngModel)]="newActivity.date" required>
         </div>
+
         <div class="form-group">
-          <label for="time">Time (e.g. 09:00 AM - 12:00 PM)</label>
-          <input type="text" id="time" name="time" [(ngModel)]="newActivity.time" required>
+          <label for="time">Start Time (24h Format)</label>
+          <input type="time" id="time" name="time" [(ngModel)]="newActivity.time" required>
         </div>
       </div>
 

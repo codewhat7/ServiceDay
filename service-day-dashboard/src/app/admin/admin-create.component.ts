@@ -12,7 +12,6 @@ import { ActivityService } from '../services/activity.service';
   styleUrls: ['./admin-create.component.css']
 })
 export class AdminCreateComponent {
-  // Temporary object to hold the form data
   newActivity: any = {
     title: '',
     description: '',
@@ -23,9 +22,15 @@ export class AdminCreateComponent {
     totalSlots: 10,
     organization: '',
     registrationDeadline: '',
-    difficulty: 'Easy'
+    difficulty: 'Easy',
+    // 🌟 ADD THIS: Initialize reminder settings for the new record
+    reminders: {
+      oneWeek: false,
+      threeDays: false,
+      oneDay: false,
+      oneSecond: false
+    }
   };
-
   submitting = false;
 
   constructor(

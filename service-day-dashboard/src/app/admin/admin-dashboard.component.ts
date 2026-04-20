@@ -24,6 +24,7 @@ export class AdminDashboardComponent implements OnInit {
 
   // Use Case 5: Notification Center Variables
   broadcastMessageText: string = '';
+  isSending: boolean = false;
   reminders = { oneWeek: true, threeDays: true, oneDay: true };
 
   constructor(
@@ -80,9 +81,20 @@ export class AdminDashboardComponent implements OnInit {
   // Use Case 5: Broadcast Message
   sendBroadcast(): void {
     if (this.broadcastMessageText.trim()) {
-      this.notificationService.broadcastMessage(this.broadcastMessageText);
-      alert('✅ Broadcast message sent to all staff and NGOs!');
-      this.broadcastMessageText = ''; // clear input box
+      this.isSending = true; // 🌟 2. Lock the button immediately
+
+      this.notificationService.broadcastMessage(this.broadcastMessageText).subscribe({
+        next: () => {
+          alert('✅ Broadcast message sent to all staff and NGOs!');
+          this.broadcastMessageText = '';
+          this.isSending = false; // 🌟 3. Unlock the button on success
+        },
+        error: (err) => {
+          console.error('Failed to send broadcast:', err);
+          alert('❌ Failed to send broadcast. Check the console.');
+          this.isSending = false; // 🌟 4. Unlock the button even if it fails
+        }
+      });
     }
   }
 
