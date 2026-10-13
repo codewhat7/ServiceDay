@@ -9,7 +9,7 @@ import { Activity } from '../models/activity.model';
 export class ActivityService {
 
   // 🌟 The master tunnel to your real database!
-  private apiUrl = 'http://localhost:3000/api/activities';
+  private apiUrl = 'https://yt2m56quld.execute-api.us-east-1.amazonaws.com/prod/api/activities';
 
   // 🌟 THE FIX: This creates the "radio station" property your list component is looking for.
   // It allows components to "listen" for data changes in real-time.

@@ -10,6 +10,8 @@ import { Employee } from '../models/activity.model';
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<Employee | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private apiUrl = 'https://yt2m56quld.execute-api.us-east-1.amazonaws.com/prod';
+
 
   constructor(
     private http: HttpClient,
@@ -28,7 +30,7 @@ export class AuthService {
   // Your exact login logic, completely untouched!
   login(email: string, passwordTyped: string): Observable<boolean> {
     // 🌟 Changed from 'assets/mock-data...' to your Node.js backend
-    return this.http.get<Employee[]>('http://localhost:3000/api/employees').pipe(
+    return this.http.get<Employee[]>('${this.apiUrl}/api/employees').pipe(
       map(employees => {
         const user = employees.find(e => e.email === email && e.password === passwordTyped);
 
@@ -59,6 +61,6 @@ export class AuthService {
   }
   // 🌟 NEW: Send a new user to the database
   registerEmployee(newUserData: any): Observable<any> {
-    return this.http.post('http://localhost:3000/api/employees', newUserData);
+    return this.http.post(`${this.apiUrl}/api/employees`, newUserData);
   }
 }

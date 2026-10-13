@@ -18,7 +18,7 @@ export interface AppNotification {
   providedIn: 'root'
 })
 export class NotificationService {
-  private apiUrl = 'http://localhost:3000/api/notifications';
+  private apiUrl = 'https://yt2m56quld.execute-api.us-east-1.amazonaws.com/prod/api/notifications';
 
   public notificationUpdated$ = new Subject<void>();
 
@@ -40,7 +40,7 @@ export class NotificationService {
 
   // 🌟 FIX: broadcastMessage now handles 1 or 2 arguments to prevent TS2554
   broadcastMessage(title: string, message: string = ''): Observable<any> {
-    return this.http.post('http://localhost:3000/api/admin/broadcast', { title, message })
+    return this.http.post('${this.apiUrl}/api/admin/broadcast', { title, message })
       .pipe(tap(() => this.notifyUpdate()));
   }
 
