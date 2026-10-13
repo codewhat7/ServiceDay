@@ -28,8 +28,8 @@ export class NotificationService {
     this.notificationUpdated$.next();
   }
 
-  getNotifications(userId: number): Observable<AppNotification[]> {
-    return this.http.get<AppNotification[]>(`${this.apiUrl}/${userId}`);
+  getNotifications(id: number): Observable<AppNotification[]> {
+    return this.http.get<AppNotification[]>(`${this.apiUrl}/${id}`);
   }
 
   // 🌟 FIX: Added missing markAsRead
@@ -53,7 +53,7 @@ export class NotificationService {
     return this.http.post(`${this.apiUrl}/cancel-email`, { userId, activityTitle });
   }
 
-  getUnreadCount(userId: number): Observable<{ unreadCount: number }> {
-    return this.http.get<{ unreadCount: number }>(`${this.apiUrl}/${userId}/count`);
+  getUnreadCount(id: number): Observable<{ unreadCount: number }> {
+    return this.http.get<{ unreadCount: number }>(`${this.apiUrl}/${id}/count`);
   }
 }
