@@ -9,11 +9,9 @@ import { ActivityService } from '../services/activity.service';
   ]
 })
 export class CoreModule {
-  // This is a standard security best-practice. It prevents the app
-  // from accidentally importing the service module twice.
   constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
     if (parentModule) {
-      throw new Error('CoreModule is already loaded. Import it in the app.config.ts only.');
+      throw new Error('CoreModule is already loaded. Import it in app.config.ts only.');
     }
   }
 }
